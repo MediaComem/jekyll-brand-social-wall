@@ -1,9 +1,27 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="fr">
 
   <body>
-    {% social_wall tw_username=lausanne2020 tw_limit=30 fb_username=lausanne2020 fb_limit=1 %}
+    {% social_wall
+
+      tw_username=lausanne2020
+      tw_limit=100
+
+      fb_username=lausanne2020
+      fb_limit=100
+    %}
   </body>
+
+  <script src="js/jQuery.js"></script>
+  <script src="js/moment-with-locales.js"></script>
+  <script>
+      moment().format();
+      // Get the language in html attribute lang=
+      moment.locale($('html')[0].lang);
+      // Change the date for every element time in Social_wall div
+      $('#social_wall').find('time').each(function(i){
+        $( this ).text(moment($( this ).html()).fromNow());
+      });
+  </script>
 
 </html>
