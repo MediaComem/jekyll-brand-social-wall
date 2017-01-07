@@ -2,8 +2,7 @@ require 'koala'
 
 class FB
 
-  def self.get_posts(username, limit)
-    limit = (defined?(limit)).nil? ? 10 : limit
+  def self.get_posts(username, limit=10)
     @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'], ENV['FACEBOOK_SECRET'])
     return Tools.transform_keys_to_symbols(@graph.get_connections(username,'posts',{limit: limit}))
   end

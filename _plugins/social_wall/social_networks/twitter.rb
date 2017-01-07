@@ -2,12 +2,9 @@ require 'twitter'
 
 class TW
 
-  def self.get_tweets(username, include_rts, limit)
+  def self.get_posts(username, include_rts=false, limit=10)
     postsTWformated = []
     postsTW = []
-
-    limit = (defined?(limit)).nil? ? 10 : limit
-    include_rts = (defined?(include_rts)).nil? ? false : include_rts
 
     clientTW = Twitter::REST::Client.new do |config|
       config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
@@ -16,7 +13,13 @@ class TW
       config.access_token_secret = ENV['TWITTER_OAUTH_TOKEN_SECRET']
     end
 
-    postsTW = clientTW.user_timeline(username,{:include_rts => include_rts,:tweet_mode => 'extended', :exclude_replies => true,:count => limit }).map(&:attrs)
+    postsTW = clientTW
+          .user_timeline(username,{
+              :include_rts => include_rts,
+              :tweet_mode => 'extended',
+              :exclude_replies => true,
+              :count => limit })
+          .map(&:attrs)
 
     # Change symbol of :created_at to the facebook one :created_time
     for post in postsTW
