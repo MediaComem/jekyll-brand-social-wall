@@ -6,3 +6,4 @@ _site
 _config.yml
 Gemfile.lock
 index.md
+js
