@@ -5,3 +5,4 @@ _site
 .env
 Gemfile.lock
 js
+css

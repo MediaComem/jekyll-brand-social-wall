@@ -122,7 +122,7 @@ class FB
       <blockquote cite="#{@post[:link]}">
         <p class="story_img"><a href="#{@post[:link]}"><img src="#{@post[:picture]}"></a></p>
         <h2>#{@post[:name]}</h2>
-        <p class="desc">#{@post[:description]}</p>
+        <p class="desc">#{@post[:description].truncate(70)}</p>
         <cite>#{@post[:caption]}</cite>
       </blockquote>
     CODE
