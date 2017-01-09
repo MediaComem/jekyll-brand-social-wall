@@ -27,7 +27,7 @@ module Jekyll
     end
 
     def facebook_posts
-      return FB.get_posts(@config['fb_username'], @config['fb_limit']) if has_facebook_settings?
+      return FB.get(:connections, @config['fb_username'], @config['fb_count']) if has_facebook_settings?
       []
     end
 
@@ -36,7 +36,7 @@ module Jekyll
     end
 
     def twitter_posts
-      return TW.get_posts(@config['tw_username'], @config['tw_include_rts'], @config['tw_limit']) if has_twitter_settings?
+      return TW.get(:user_timeline, @config['tw_username'], @config['tw_include_rts'], @config['tw_count']) if has_twitter_settings?
       []
     end
 

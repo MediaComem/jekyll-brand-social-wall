@@ -15,13 +15,18 @@ class FB
     @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'], ENV['FACEBOOK_SECRET'])
   end
 
-  def self.get_posts(username, limit)
+  def self.get(meth, username, limit)
     posts_FB = []
+
     FB.new_connection
 
-    posts_FB = Tools.transform_keys_to_symbols(@graph.get_connections(username,'posts',{limit: limit}))
+    posts_FB = FB.method(meth).call(username, limit)
 
     return posts_FB.map{ |post| FB.new(post, post[:created_time]) }
+  end
+
+  def self.connections(username, limit)
+    return Tools.transform_keys_to_symbols(@graph.get_connections(username,'posts',{limit: limit}))
   end
 
   def self.get_object(object)

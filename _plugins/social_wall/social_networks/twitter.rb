@@ -20,23 +20,30 @@ class TW
     end
   end
 
-  def self.get_posts(username, include_rts, limit)
+  def self.get(meth, username, include_rts, count)
     posts_TW = []
 
     TW.new_connection
 
-    posts_TW = @clientTW
-          .user_timeline(username,{
-              :include_rts => include_rts,
-              :tweet_mode => 'extended',
-              :exclude_replies => true,
-              :count => limit })
-          .map(&:attrs)
+    posts_TW = TW.method(meth).call(username, include_rts, count.to_i)
 
     # Change symbol of :created_at to the facebook one :created_time
     posts_TW = Tools.rename_symbole(posts_TW, :created_at, :created_time)
 
     return posts_TW.map{ |post| TW.new(post, post[:created_time])}
+  end
+
+  # Recursive call to match the real number of tweets with the user's input -> in user_timeline number of tweets are counted before others filters like include_rts or exclude_replies
+  def self.user_timeline(username, include_rts, count, count_diff=count)
+    posts_TW = @clientTW
+          .user_timeline(username,{
+              :include_rts => include_rts,
+              :tweet_mode => 'extended',
+              :exclude_replies => true,
+              :count => count_diff })
+          .map(&:attrs) #also known as: to_h
+    return user_timeline(username, include_rts, count, count_diff += count - posts_TW.length) if count > posts_TW.length
+    return posts_TW
   end
 
   def render
@@ -52,7 +59,7 @@ class TW
     return html
   end
 
-  def self.parse_tweet_text(text)
+  def parse_text(text)
     text = text.gsub(/http[s]:\/\/t.co[a-z0-9._\/-]+$/i,'') # Remove the tweet's url included in the text at the end
     text = text.gsub(/http[s]:\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
     text = text.gsub(/@([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_]+)/i, '<a class="mention" href="http://twitter.com/\1">@\1</a>')
@@ -69,7 +76,7 @@ class TW
 
   def status
     <<-CODE
-      <p class="status" id="#{@post[:id_str]}">#{TW.parse_tweet_text(@post[:full_text])}</p>
+      <p class="status" id="#{@post[:id_str]}">#{parse_text(@post[:full_text])}</p>
     CODE
   end
 
@@ -90,7 +97,7 @@ class TW
         <blockquote cite="#{@post[:quoted_status][:entities][:urls][0][:expanded_url]}">
           <h2><cite><a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">#{@post[:quoted_status][:user][:name]}</a></cite></h2>
           #{quoted_status_photo if has_quoted_status_with_photo?}
-          <p class="desc">#{TW.parse_tweet_text(@post[:quoted_status][:full_text])}</p>
+          <p class="desc">#{parse_text(@post[:quoted_status][:full_text])}</p>
         </blockquote>
     CODE
   end
