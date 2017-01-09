@@ -120,7 +120,7 @@ class FB
   def shared_story
     <<-CODE
       <blockquote cite="#{@post[:link]}">
-        <p class="story_img"><a href="#{@post[:link]}"><img src="#{@post[:picture]}" border="0"></a></p>
+        <p class="story_img"><a href="#{@post[:link]}"><img src="#{@post[:picture]}"></a></p>
         <h2>#{@post[:name]}</h2>
         <p class="desc">#{@post[:description]}</p>
         <cite>#{@post[:caption]}</cite>

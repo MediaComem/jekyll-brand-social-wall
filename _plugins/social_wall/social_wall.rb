@@ -17,7 +17,7 @@ module Jekyll
       # Config from Liquid.:Tag
       @config = (Tools.parse_liquid_params(config)).merge(@config)
 
-      @config['include_rts'] ||= false
+      @config['tw_include_rts'] ||= false
       @config['fb_limit']    ||= 10
       @config['tw_limit']    ||= 10
     end
