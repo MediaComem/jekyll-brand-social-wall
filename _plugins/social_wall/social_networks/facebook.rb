@@ -44,8 +44,8 @@ class FB
       html << "<div class='facebook_status #{@post[:type]}'>"
       html << photo if has_photo?
       html << video if has_video?
-      html << message
       html << shared_story if has_shared_story?
+      html << message
       html << meta_info
       html << "</div>"
     end
@@ -65,9 +65,7 @@ class FB
     picture_url = FB.get_picture_data(@post[:object_id], 'normal')[:data][:url] # must be one of the following values: thumbnail, album, normal
 
     return  <<-CODE
-      <a href="#{picture_url}" class="link-photo" title="#{@post[:message].truncate(70)}">
         <img src="#{picture_url}"/>
-      </a>
     CODE
   end
 
@@ -130,11 +128,13 @@ class FB
 
   def meta_info
     <<-CODE
-      <p class="info">
-        <span class="icon">f</span>
+      <p class="info left">
+        <span class="icon-facebook"></span>
         <span class="user"><a href="https://www.facebook.com/#{@post[:from][:name]}">#{@post[:from][:name]}</a></span>
+      </p>
+      <p class="info right">
         <time pubdate datetime="#{created_time}">#{created_time}</time>
-        <a class="share icon" href="http://www.facebook.com/share.php?v=4&amp;src=bm&amp;u=#{CGI.escape(@post[:link])}">i</a>
+        <a class="icon-share" href="http://www.facebook.com/share.php?v=4&amp;src=bm&amp;u=#{CGI.escape(@post[:link])}"></a>
       </p>
     CODE
   end

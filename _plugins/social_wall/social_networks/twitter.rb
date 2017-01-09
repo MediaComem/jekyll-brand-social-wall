@@ -50,8 +50,8 @@ class TW
 
     html << "<div class='twitter_status#{" quoted" if has_quoted_status?}'>"
     html << photo("small") if has_photo?
-    html << status
     html << quoted_status if has_quoted_status?
+    html << status
     html << meta_info
     html << "</div>"
 
@@ -94,9 +94,12 @@ class TW
   def quoted_status
     <<-CODE
         <blockquote cite="#{@post[:quoted_status][:entities][:urls][0][:expanded_url]}">
-          <h2><cite><a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">#{@post[:quoted_status][:user][:name]}</a></cite></h2>
-          #{quoted_status_photo if has_quoted_status_with_photo?}
-          <p class="desc">#{parse_text(@post[:quoted_status][:full_text])}</p>
+          <a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">
+            #{quoted_status_photo if has_quoted_status_with_photo?}
+            <h2></h2>
+            <p class="desc">#{parse_text(@post[:quoted_status][:full_text])}</p>
+            <cite>#{@post[:quoted_status][:user][:name]}</cite>
+          </a>
         </blockquote>
     CODE
   end
@@ -113,13 +116,15 @@ class TW
 
   def meta_info
     <<-CODE
-      <p class="info">
-        <span class="icon">t</span>
+      <p class="info left">
+        <span class="icon-twitter"></span>
         <span class="user"><a href="http://twitter.com/#{@post[:user][:screen_name]}">#{@post[:user][:name]}</a></span>
-        <time pubdate datetime="#{created_time}">#{created_time}</time>
-        <a href="https://twitter.com/intent/favorite?tweet_id=#{@post[:id_str]}" class="favorite icon">R</a>
-        <a href="https://twitter.com/intent/retweet?tweet_id=#{@post[:id_str]}" class="retweet icon">J</a>
-        <a href="https://twitter.com/intent/tweet?in_reply_to=#{@post[:id_str]}" class="tweet icon">h</a>
+      </p>
+      <p class="info right">
+      <time pubdate datetime="#{created_time}">#{created_time}</time>
+        <a href="https://twitter.com/intent/tweet?in_reply_to=#{@post[:id_str]}" class="icon-reply"></a>
+        <a href="https://twitter.com/intent/retweet?tweet_id=#{@post[:id_str]}" class="icon-loop"></a>
+        <a href="https://twitter.com/intent/favorite?tweet_id=#{@post[:id_str]}" class="icon-heart"></a>
       </p>
     CODE
   end
