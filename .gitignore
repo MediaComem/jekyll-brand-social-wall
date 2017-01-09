@@ -3,7 +3,5 @@ _site
 .jekyll-metadata
 
 .env
-_config.yml
 Gemfile.lock
-index.md
 js
