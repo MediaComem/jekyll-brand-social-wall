@@ -1,4 +1,4 @@
-# Jekyll Social Wall
+# Jekyll Social Wall :barber:
 A jekyll plugin to generate a social wall with your favorite social networks
 
 ![](i/render_example.png)
@@ -8,8 +8,7 @@ A jekyll plugin to generate a social wall with your favorite social networks
  * Mix and sort them by date and time
  * Render HTML Markup
 
-## A Social Wall ? :barber:
-
+## A Social Wall ?
 
 A **social wall** is a posts aggregator from multiple social networks. It combines them, display them and give to the public an insight of the social activity and the latest news of a brand.
 
@@ -19,7 +18,7 @@ Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggrega
 
 [![](i/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](i/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](i/social_wall-square.png) | ![](i/social_wall-timeline.png) |
  --- | --- | --- | --- | --- | --- | ---
- Flexible Layout | Images show | Pinterest-like | Windows style | Square |  Timeline | Others Layout
+ Flexible Layout | Images show | Pinterest-like | Windows style | Square |  Timeline | Another Layout?
 
 Images from @Kombai under the MIT license
 
@@ -27,19 +26,19 @@ Images from @Kombai under the MIT license
 Examples of criteria or questions you should ask yourself or your client:
 
  - Time of the post (Newest first usually)
- - Numbers of posts (by networks ? one network is preferred ?)
+ - A number of posts (by networks ? One network is preferred ?)
  - Hashtags filters
  - One or many accounts (external: retweet, hashtags,...)
- - Numbers of likes/retweet (Like a second choice critera)
+ - A number of likes/retweet (Like a second choice critera)
  - Which media to prioritize ? Text vs Pictures ?
 
 ## What you need to be aware of
-
+...
 
 
 ## Installation
 
-1. Copy folder `social_wall`  into `_plugins`  within your Jekyll project.
+1. Copy th folder `social_wall`  into `_plugins`  within your Jekyll project.
 2. Generate your social networks credentials
  - Facebook
     - Create and app: https://developers.facebook.com/docs/apps/register
@@ -77,6 +76,7 @@ Examples of criteria or questions you should ask yourself or your client:
 5. **Enjoy!**
 
 ## How To Use
+Add the following liquid tag in any of your layout. Every social network is optional.
 
 ```liquid
 {% social_wall
@@ -92,7 +92,7 @@ Examples of criteria or questions you should ask yourself or your client:
 ### Parameters
 
 Name| Description|Default Value| Limitation | Example
-----|----|----|
+----|----|----|----|----
 tw_username| any twitter username but only one! |  | | katyperry
 tw_count| exact number of tweets needed| 10 | [200](https://dev.twitter.com/rest/reference/get/statuses/user_timeline#parameters) | 36
 tw_include_rts| retweets are fetch <sup>1</sup> | false | | true
