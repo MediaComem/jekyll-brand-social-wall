@@ -95,7 +95,7 @@ Name| Description|Default Value| Limitation | Example
 ----|----|----|----|----
 tw_username| any twitter username but only one! |  | | katyperry
 tw_count| exact number of tweets needed| 10 | [200](https://dev.twitter.com/rest/reference/get/statuses/user_timeline#parameters) | 36
-tw_include_rts| retweets are fetch <sup>1</sup> | false | | true
+tw_include_rts| retweets are fetched <sup>1</sup> | false | | true
 fb_username| any facebook username but only one! | | | bbcnews
 fb_count| exact number of posts needed| 10 | limited | 10
 
