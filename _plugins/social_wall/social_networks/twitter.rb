@@ -42,8 +42,7 @@ class TW
               :exclude_replies => true,
               :count => count_diff })
           .map(&:attrs) #also known as: to_h
-    return user_timeline(username, include_rts, count, count_diff += count - posts_TW.length) if count > posts_TW.length
-    return posts_TW
+    return count > posts_TW.length ? user_timeline(username, include_rts, count, count_diff += count - posts_TW.length) : posts_TW
   end
 
   def render
