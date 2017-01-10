@@ -7,3 +7,5 @@ Gemfile.lock
 js
 css
 assets
+!_example/**
+!_example/css/**
