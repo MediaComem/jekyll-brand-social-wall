@@ -1,3 +1,5 @@
+/* Social_wall Icons */
+
 @font-face {
   font-family: 'icomoon';
   src:  url('../assets/fonts/icomoon.eot?srxkgt');
@@ -76,6 +78,8 @@
   color:#E2264D;
 }
 
+/* Social_wall Base */
+
 body{
   background-color: #ce0071;
   background-image: url("http://uploads.webflow.com/5808c5805740fb8239ba0b9d/5811b0ec8c32a6c4213b42df_bkg_3.png");
@@ -85,37 +89,86 @@ body{
   width: 1280px;
   margin: auto;
 }
-#social_wall > div{
+.social_wall > div{
   float:left;
   background:#fff;
   padding:20px;
-  width:28%;
+  width:300px;
   margin:10px;
   font-family: Montserrat, sans-serif;
 }
 
-#social_wall > div > a > img, #social_wall > div > img, #social_wall > div > video, #social_wall > div > a > iframe{
+.social_wall > div > a > img, .social_wall > div > img, .social_wall > div > video, .social_wall > div > a > iframe, .social_wall > div > iframe{
   width: 100%;
 }
 
-#social_wall > div p.status{
+.social_wall .wrap_iframe{
+  position: relative; width: 100%; height: 0px; padding-bottom: 56%;
+}
+.social_wall .wrap_iframe iframe{
+  position: absolute; left: 0px; top: 0px; width: 100%; height: 100%
+}
+
+.social_wall a{
+  text-decoration: none;
+}
+
+/* Status/message */
+
+.social_wall > div p.status{
   color:#858585;
   font-size:12px;
   line-height: 18px;
   clear: both;
   font-family:sans-serif;
-  padding-bottom: 10px;
+  margin-bottom: 0;
 }
-#social_wall > div p.status a, #social_wall > div p.status a:visited, #social_wall > div p.status a:active, #social_wall > div p.status a:link{
+.social_wall > div p.status a, .social_wall > div p.status a:visited, .social_wall > div p.status a:active, .social_wall > div p.status a:link{
   color:#0087cd;
-  text-decoration: none;
   font-size: 12px;
 }
-#social_wall > div p.status a:hover{
+.social_wall > div p.status a:hover{
   color:#666;
 }
 
-#social_wall blockquote{
+/* Status/message */
+
+.social_wall .status_box, .social_wall .status_box {
+  max-height: 80px;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+}
+
+.social_wall > .link .status_box, .social_wall > .quoted .status_box{
+  max-height: 50px;
+}
+
+.social_wall .status_box .read-more, .social_wall .status_box .read-more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height:100%;
+  text-align: center;
+  margin: 0;
+  background-image: linear-gradient(to bottom, transparent, transparent 120px, white);
+}
+
+.social_wall > .link .status_box, .social_wall > .quoted .status_box{
+  background-image: linear-gradient(to bottom, transparent, white);
+}
+
+.social_wall .status_box .read-more a, .social_wall .status_box .read-more a {
+  width: 100%;
+  display: block;
+  height: 100%;
+}
+
+
+/* Social_wall Blockquote */
+
+.social_wall blockquote{
   margin:0;
   display: inline-block;
   width: 100%;
@@ -123,41 +176,51 @@ body{
   border: 1px solid #EFEFEF;
 }
 
-#social_wall blockquote .story_img{
+.social_wall blockquote .story_img{
   margin: 10px;
   float:left;
 }
 
-#social_wall blockquote h2{
+.social_wall blockquote h2,.social_wall blockquote h2 a{
   font-size: 14px;
+  color: #ce0071;
   word-break: normal;
 }
 
-#social_wall blockquote p.desc{
+.social_wall blockquote p.desc{
   font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   color: #858585;
 }
 
-#social_wall blockquote cite{
+.social_wall blockquote p.desc a{
+  color: #858585;
+}
+
+.social_wall blockquote cite, .social_wall blockquote cite a{
   font-size: 10px;
   color: #b6b6b6;
 }
 
-#social_wall p.info{
+/* Social_wall meta info */
+
+.social_wall p.info{
   margin:0;
 }
-#social_wall p.info.left{
+.social_wall p.info.left{
   margin-bottom: -15px;
+  margin-top: 10px;
 }
 
-#social_wall p.info.right{
+.social_wall p.info.right{
   float:right;
 }
-#social_wall p.info.right a{
+.social_wall p.info.right a{
   padding:2px;
 }
 
-#social_wall p.info span.user a{
+.social_wall p.info span.user a{
   color: #ce0071;
   font-size: 18px;
   font-weight: 700;
@@ -166,7 +229,7 @@ body{
   text-decoration: none;
 }
 
-#social_wall p.info time{
+.social_wall p.info time{
   color: #b6b6b6;
   font-size: 12px;
 }

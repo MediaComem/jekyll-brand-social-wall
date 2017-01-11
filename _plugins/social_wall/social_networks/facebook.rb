@@ -8,7 +8,7 @@ class FB
   end
 
   def created_time
-    DateTime.parse(@created_time).change(:offset => "-0800")
+    DateTime.parse(@created_time)
   end
 
   def self.new_connection
@@ -29,19 +29,15 @@ class FB
     return Tools.transform_keys_to_symbols(@graph.get_connections(username,'posts',{limit: limit}))
   end
 
-  def self.get_object(object)
-    return Tools.transform_keys_to_symbols(@graph.get_object(object))
-  end
-
   def self.get_picture_data(object_id, size)
-    return Tools.transform_keys_to_symbols(@graph.get_picture_data(object_id, :type => size))
+    return Tools.transform_keys_to_symbols(@graph.get_picture_data(object_id,:type => size))
   end
 
   def render
     html = String.new
 
     if post_valid?
-      html << "<div class='facebook_status #{@post[:type]}'>"
+      html << "<div class='facebook_status item #{@post[:type]}'>"
       html << photo if has_photo?
       html << video if has_video?
       html << shared_story if has_shared_story?
@@ -61,11 +57,20 @@ class FB
     @post[:type] == 'photo'
   end
 
-  def photo
-    picture_url = FB.get_picture_data(@post[:object_id], 'normal')[:data][:url] # must be one of the following values: thumbnail, album, normal
+  def photo_format(height, width)
 
+  end
+
+  def parse_photo_format(lien)
+    return lien.scan(/\/s([0-9]{1,4})x([0-9]{1,4})\//)
+  end
+
+  def photo
+    picture = FB.get_picture_data(@post[:object_id], 'normal') # must be one of the following values: thumbnail, album, normal
+    #puts picture
+    #puts parse_photo_format(picture[:data][:url])
     return  <<-CODE
-        <img src="#{picture_url}"/>
+        <img src="#{picture[:data][:url]}" class=""/>
     CODE
   end
 
@@ -88,20 +93,25 @@ class FB
       CODE
     else # Youtube, Dailymotion, Vimeo, more?
       <<-CODE
-        <iframe src="#{parse_video(@post[:source])}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        <div class="wrap_iframe">
+          <iframe src="#{parse_video(@post[:source])}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
       CODE
     end
   end
 
   def parse_video(lien)
-    # Remove autoplay
-    lien.gsub('autoplay=1', 'autoplay=0')
+    # Youtube custom link
+    lien = lien.gsub('autoplay=1', 'autoplay=0&rel=0&amp;showinfo=0')
     return lien
   end
 
   def message
     <<-CODE
-      <p class="status">#{parse_message(@post[:message])}</p>
+      <div class="status_box">
+        <p class="status">#{parse_message(@post[:message])}</p>
+        <p class="read-more"><a href="#" class="button"></a></p>
+      </div>
     CODE
   end
 
@@ -119,8 +129,8 @@ class FB
     <<-CODE
       <blockquote cite="#{@post[:link]}">
         <p class="story_img"><a href="#{@post[:link]}"><img src="#{@post[:picture]}"></a></p>
-        <h2>#{@post[:name]}</h2>
-        <p class="desc">#{@post[:description].truncate(70)}</p>
+        <h2><a href="#{@post[:link]}">#{@post[:name]}</a></h2>
+        <p class="desc">#{@post[:description].to_s.truncate(70)}</p>
         <cite>#{@post[:caption]}</cite>
       </blockquote>
     CODE

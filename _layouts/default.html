@@ -10,10 +10,10 @@
     {% social_wall
 
       tw_username: lausanne2020,
-      tw_count: 30,
+      tw_count: 4,
 
       fb_username: lausanne2020,
-      fb_count: 30,
+      fb_count: 5,
     %}
   </body>
 
@@ -21,15 +21,60 @@
 			  src="https://code.jquery.com/jquery-3.1.1.min.js"
 			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 			  crossorigin="anonymous"></script>
+  <script src="js/mason.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
 
   <script>
+
+      $(".social_wall").mason({
+        itemSelector: ".item",
+        ratio: 1,
+        sizes: [
+            [1,1]
+        ]
+      });
+
       moment().format();
       // Get the language in html attribute lang=
       moment.locale($('html')[0].lang);
       // Change the date for every element time in Social_wall div
-      $('#social_wall').find('time').each(function(i){
+      $('.social_wall').find('time').each(function(i){
         $( this ).text(moment($( this ).html()).fromNow());
+      });
+
+
+      var $el, $ps, $up, totalHeight;
+
+      $(".social_wall .status_box .read-more a").click(function() {
+
+        totalHeight = 0
+
+        $el = $(this);
+        $p  = $el.parent();
+        $up = $p.parent();
+        $ps = $up.find("p:not('.read-more')");
+
+        // measure how tall inside should be by adding together heights of all inside paragraphs (except read-more paragraph)
+        $ps.each(function() {
+          totalHeight += $(this).outerHeight(true);
+        });
+
+        $up
+          .css({
+            // Set height to prevent instant jumpdown when max height is removed
+            "height": $up.height(true),
+            "max-height": 9999
+          })
+          .animate({
+            "height": totalHeight
+          });
+
+        // fade out read-more
+        $p.fadeOut();
+
+        // prevent jump-down
+        return false;
+
       });
   </script>
 

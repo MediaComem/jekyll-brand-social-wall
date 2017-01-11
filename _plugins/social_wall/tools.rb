@@ -42,21 +42,3 @@ class String
   end
 
 end
-
-class DateTime
-
-  # Extends class DateTime with Rails method: http://apidock.com/rails/DateTime/change
-  def change(options)
-      ::DateTime.civil(
-        options.fetch(:year, year),
-        options.fetch(:month, month),
-        options.fetch(:day, day),
-        options.fetch(:hour, hour),
-        options.fetch(:min, options[:hour] ? 0 : min),
-        options.fetch(:sec, (options[:hour] || options[:min]) ? 0 : sec + sec_fraction),
-        options.fetch(:offset, offset),
-        options.fetch(:start, start)
-      )
-  end
-
-end

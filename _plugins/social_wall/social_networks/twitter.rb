@@ -8,7 +8,7 @@ class TW
   end
 
   def created_time
-    DateTime.parse(@created_time).change(:offset => "-0800")
+    DateTime.parse(@created_time)
   end
 
   def self.new_connection
@@ -48,10 +48,10 @@ class TW
   def render
     html = String.new
 
-    html << "<div class='twitter_status#{" quoted" if has_quoted_status?}'>"
-    html << photo("small") if has_photo?
+    html << "<div class='twitter_status item#{" quoted" if has_quoted_status?}'>"
+    html << photo(:small) if has_photo?
     html << quoted_status if has_quoted_status?
-    html << status
+    html << message
     html << meta_info
     html << "</div>"
 
@@ -68,14 +68,24 @@ class TW
 
   # @params size: thumb, small, medium, large
   def photo(size)
+    photo_data = @post[:extended_entities][:media][0]
     <<-CODE
-      <img src="#{@post[:extended_entities][:media][0][:media_url]}:#{size}" />
+      <img src="#{photo_data[:media_url]}:#{size}" class="#{photo_format(photo_data[:sizes][size][:w].to_i, photo_data[:sizes][size][:h].to_i)}" />
     CODE
   end
 
-  def status
+  def photo_format(width, height)
+    return "square" if width == height
+    return "landscape" if width > height
+    return "portrait" if height > width
+  end
+
+  def message
     <<-CODE
-      <p class="status" id="#{@post[:id_str]}">#{parse_text(@post[:full_text])}</p>
+      <div class="status_box">
+        <p class="status" id="#{@post[:id_str]}">#{parse_text(@post[:full_text])}</p>
+        <p class="read-more"><a href="#" class="button"></a></p>
+      </div>
     CODE
   end
 
@@ -92,15 +102,15 @@ class TW
   end
 
   def quoted_status
+    @post[:quoted_status]
     <<-CODE
         <blockquote cite="#{@post[:quoted_status][:entities][:urls][0][:expanded_url]}">
-          <a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">
             #{quoted_status_photo if has_quoted_status_with_photo?}
-            <h2></h2>
+            <h2><cite>#{@post[:quoted_status][:user][:name]}<br/>
+            <a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">@#{@post[:quoted_status][:user][:screen_name]}</a></cite></h2>
             <p class="desc">#{parse_text(@post[:quoted_status][:full_text])}</p>
-            <cite>#{@post[:quoted_status][:user][:name]}</cite>
-          </a>
         </blockquote>
+        </a>
     CODE
   end
 

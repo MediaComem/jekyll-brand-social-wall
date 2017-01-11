@@ -135,20 +135,8 @@ fb_count| exact number of posts needed| 10 | limited | 10
 </div>
 ```
 
-## Layout your social wall with JavaScript/jQuery
-There are multiple ways to layout your wall. Here are some grid systems:
-
-   * https://github.com/kombai/freewall
-   * http://masonry.desandro.com/
-   * http://isotope.metafizzy.co/
-   * https://github.com/dmdez/simple-masonry
-   * http://masonjs.com/
-   * https://github.com/liabru/jquery-match-height
-   * http://urin.github.io/jquery.tile.js/
-
-
 ## Futures Features
-- [ ] Multilingual Facebook posts
+- [ ] Stripping multilingual duplicate posts
 - [ ] Twitter Video/Gif support
 - [ ] Option to include hashtags posts for both Facebook and Twitter
 - [ ] Support for others social networks

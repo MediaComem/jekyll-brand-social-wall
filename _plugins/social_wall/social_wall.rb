@@ -54,7 +54,7 @@ module Jekyll
     def render(context)
       html = mix_posts.map{ |post| post.render}.join || ""
 
-      %Q"<div id='social_wall'>#{html}</div>"
+      %Q"<div class='social_wall'>#{html}</div>"
     end
 
   end
