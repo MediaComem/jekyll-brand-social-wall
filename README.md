@@ -8,18 +8,18 @@ A jekyll plugin to generate a social wall with your favorite social networks
  * Mix and sort them by date and time
  * Render HTML Markup
 
-## Why should you use it ?
+## Why you should use it
  * Compare to all others js plugin, it doesn't expose any of your credentials
  * No need of realtime update if yours social accounts have no more than few news every day
  * Lightweight and cacheable
 
-## A Social Wall ?
+## The Social Wall Definition
 
 A **social wall** is a posts aggregator from multiple social networks. It combines them, display them and give to the public an insight of the social activity and the latest news of a brand.
 
 Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggregator, Network wall, Tagboard
 
-### Various styles
+### Various layouts
 
 [![](i/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](i/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](i/social_wall-square.png) | ![](i/social_wall-timeline.png) |
  --- | --- | --- | --- | --- | --- | ---
@@ -45,7 +45,7 @@ Some questions might need to improve this plugin !
     - Create and app: https://developers.facebook.com/docs/apps/register
  - Twitter
     - https://dev.twitter.com/oauth/overview
-2. Create a `.env` file with your social networks credentials
+3. Create a `.env` file with your social networks credentials
 
   ```
   # Facebook credentials
@@ -60,7 +60,7 @@ Some questions might need to improve this plugin !
   TWITTER_OAUTH_TOKEN=myoauthtoken
   TWITTER_OAUTH_TOKEN_SECRET=myoauthtokensecret
   ```
-3. Install the following gem by adding them to your `_config.yml` and running `bundle install`
+4. Install the following gem by adding them to your `_config.yml` and running `bundle install`
 
   ```yaml
   gem 'dotenv', :groups => [:development, :test]
@@ -69,15 +69,16 @@ Some questions might need to improve this plugin !
 
   gem "twitter", "~> 6.0.0"
   ```
-4. Configure a webhook subscription every social network used
+5. Configure a webhook subscription every social network used
  - Facebook
     - https://developers.facebook.com/docs/graph-api/webhooks
  - Twitter
     - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/, https://ifttt.com/ ...
-5. **Enjoy!**
+6. Customize the html template by rewriting the ruby files inside the `social_networks` folder
+7. **Enjoy!**
 
 ## How To Use
-Add the following liquid tag in any of your layout. Every social network is optional.
+Add the following liquid tag in any of your layout or pages. Every social network is optional. Remove `??_username` to disable one.
 
 ```liquid
 {% social_wall
