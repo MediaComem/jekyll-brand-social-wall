@@ -1,4 +1,4 @@
-# Jekyll Social Wall :barber:
+# Jekyll Brand Social Wall :barber:
 A jekyll plugin to generate a social wall with your favorite social networks
 
 ![](i/render_example.png)
@@ -7,6 +7,11 @@ A jekyll plugin to generate a social wall with your favorite social networks
  * Fetch your last posts from different social networks
  * Mix and sort them by date and time
  * Render HTML Markup
+
+## Why should you use it ?
+ * Compare to all others js plugin, it doesn't expose any of your credentials
+ * No need of realtime update if yours social accounts have no more than few news every day
+ * Lightweight and cacheable
 
 ## A Social Wall ?
 
@@ -18,23 +23,19 @@ Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggrega
 
 [![](i/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](i/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](i/social_wall-square.png) | ![](i/social_wall-timeline.png) |
  --- | --- | --- | --- | --- | --- | ---
- Flexible Layout | Images show | Pinterest-like | Windows style | Square |  Timeline | Another Layout?
+ Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout?
 
-Images from @Kombai under the MIT license
+Images from @Kombai plugin under the MIT license
 
 ### What do you want to highlight?
 Examples of criteria or questions you should ask yourself or your client:
+Some questions might need to improve this plugin !
 
- - Time of the post (Newest first usually)
- - A number of posts (by networks ? One network is preferred ?)
- - Hashtags filters
- - One or many accounts (external: retweet, hashtags,...)
- - A number of likes/retweet (Like a second choice critera)
- - Which media to prioritize ? Text vs Pictures ?
-
-## What you need to be aware of
-...
-
+ - Which number of posts to display (for all networks ? One network is preferred ?)
+ - Do you need Hashtags filters ?
+ - Show to your public one or many accounts (external: retweet, hashtags,...)
+ - Sort by ? Date (usually newest), most liked/retweet/favorite posts,...
+ - Which media to prioritize ? Text vs Pictures ? Video, GIF ?
 
 ## Installation
 
@@ -72,7 +73,7 @@ Examples of criteria or questions you should ask yourself or your client:
  - Facebook
     - https://developers.facebook.com/docs/graph-api/webhooks
  - Twitter
-    - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/ or probably https://ifttt.com/
+    - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/, https://ifttt.com/ ...
 5. **Enjoy!**
 
 ## How To Use
@@ -137,6 +138,11 @@ fb_count| exact number of posts needed| 10 | limited | 10
 
 ## Futures Features
 - [ ] Stripping multilingual duplicate posts
+   - https://github.com/simplificator/babel
+   - https://github.com/feedbackmine/language_detector
+   - https://github.com/peterc/whatlanguage
+   - https://github.com/vhyza/language_detection
+   - https://github.com/detectlanguage/detectlanguage-ruby
 - [ ] Twitter Video/Gif support
 - [ ] Option to include hashtags posts for both Facebook and Twitter
 - [ ] Support for others social networks
