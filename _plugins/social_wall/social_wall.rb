@@ -1,5 +1,4 @@
 require 'dotenv'
-require_relative 'tools'
 require_relative 'social_networks/twitter'
 require_relative 'social_networks/facebook'
 
@@ -11,15 +10,24 @@ module Jekyll
       super
       Dotenv.load
 
-      # Config from _config.yml
-      @config = Jekyll.configuration({})['social_wall'] || {}
-
       # Config from Liquid.:Tag
-      @config = (Tools.parse_liquid_params(config)).merge(@config)
+      @config = parse_liquid_params(config)
 
-      @config['tw_include_rts'] ||= false
-      @config['fb_limit']    ||= 10
-      @config['tw_limit']    ||= 10
+      @config['tw_include_rts']   ||= false
+      @config['fb_amount']        ||= 10
+      @config['tw_amount']        ||= 10
+
+      @layout = Liquid::Template.parse(
+                    File.read("_layouts/social_wall.html").chomp
+                  )
+    end
+
+    def parse_liquid_params(params)
+        attributes = {}
+        params.scan(::Liquid::TagAttributes) do |key, value|
+          attributes[key] = value
+        end
+        return attributes
     end
 
     def has_facebook_settings?
@@ -27,7 +35,7 @@ module Jekyll
     end
 
     def facebook_posts
-      return FB.get(:connections, @config['fb_username'], @config['fb_count']) if has_facebook_settings?
+      return FB.get(:connections, @config['fb_username'], @config['fb_amount']) if has_facebook_settings?
       []
     end
 
@@ -36,7 +44,7 @@ module Jekyll
     end
 
     def twitter_posts
-      return TW.get(:user_timeline, @config['tw_username'], @config['tw_include_rts'], @config['tw_count']) if has_twitter_settings?
+      return TW.get(:user_timeline, @config['tw_username'], @config['tw_include_rts'], @config['tw_amount']) if has_twitter_settings?
       []
     end
 
@@ -52,9 +60,7 @@ module Jekyll
     end
 
     def render(context)
-      html = mix_posts.map{ |post| post.render}.join || ""
-
-      %Q"<div id='social_wall'>#{html}</div>"
+      mix_posts.map{ |post| @layout.render(post.standardize)}.join || ""
     end
 
   end

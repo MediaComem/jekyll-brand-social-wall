@@ -1,6 +1,9 @@
+require_relative 'shared_methods.rb'
 require 'twitter'
+require 'metainspector'
 
 class TW
+  include SharedMethods
 
   def initialize(post, created_time)
     @post = post
@@ -8,7 +11,7 @@ class TW
   end
 
   def created_time
-    DateTime.parse(@created_time).change(:offset => "-0800")
+    DateTime.parse(@created_time)
   end
 
   def self.new_connection
@@ -20,17 +23,18 @@ class TW
     end
   end
 
-  def self.get(meth, username, include_rts, count)
+  def self.get(meth, username, include_rts, amount)
     posts_TW = []
 
     TW.new_connection
 
-    posts_TW = TW.method(meth).call(username, include_rts, count.to_i)
+    posts_TW = TW.method(meth).call(username, include_rts, amount.to_i)
 
-    # Change symbol of :created_at to the facebook one :created_time
-    posts_TW = Tools.rename_symbole(posts_TW, :created_at, :created_time)
+    return posts_TW.map{ |post| TW.new(post, post[:created_at])}
+  end
 
-    return posts_TW.map{ |post| TW.new(post, post[:created_time])}
+  def self.hashtag_timeline(hashtag)
+    return @clientTW.search(hashtag + " -rt").first
   end
 
   # Recursive call to match the real number of tweets with the user's input -> in user_timeline number of tweets are counted before others filters like include_rts or exclude_replies
@@ -45,88 +49,169 @@ class TW
     return count > posts_TW.length ? user_timeline(username, include_rts, count, count_diff += count - posts_TW.length) : posts_TW
   end
 
-  def render
-    html = String.new
-
-    html << "<div class='twitter_status#{" quoted" if has_quoted_status?}'>"
-    html << photo("small") if has_photo?
-    html << quoted_status if has_quoted_status?
-    html << status
-    html << meta_info
-    html << "</div>"
-
-    return html
+  def has_type?
+    !defined?(@post[:extended_entities][:media][0][:type]) && !has_quoted_status? && !has_link?
   end
 
-  def parse_text(text)
-    text = text.gsub(/http[s]:\/\/t.co[a-z0-9._\/-]+$/i,'') # Remove the tweet's url included in the text at the end
-    text = text.gsub(/http[s]:\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
+
+
+  def standardize
+    puts @post[:id]
+    post = Hash.new
+
+    post['social_network'] = 'twitter'
+    #post['type'] = @post['type'] if has_type? || 'text_only'
+
+    post['photo'] = photo(:small) if has_photo? && (!has_ext_quote? || is_ext_quote_facebook?)
+    #post['video'] = video if has_video?
+    post['video'] = ext_quote_video if has_ext_quote? && has_ext_quote_video?
+
+    post['int_quote'] = int_quote if has_int_quote?
+    post['ext_quote'] = ext_quote if has_ext_quote? && !has_ext_quote_video? && !is_ext_quote_facebook?
+
+    post['message'] = parse_message(@post[:full_text]) if has_message?
+    post['user'] = user_info
+    post['meta'] = meta_info
+
+    return post
+  end
+
+
+
+  def text_only?
+    !defined?(@post[:extended_entities][:media][0][:type]) && !has_quoted_status? && !has_link?
+  end
+
+  # Photos
+
+  def has_photo?
+    defined?(@post[:extended_entities][:media][0][:type]) && @post[:extended_entities][:media][0][:type] == "photo"
+  end
+
+  # @params size: thumb, small, medium, large
+  def photo(size)
+    data = @post[:extended_entities][:media][0]
+    photo = Hash.new
+    photo['width'] = data[:sizes][size][:w].to_i
+    photo['height'] = data[:sizes][size][:h].to_i
+    photo['format'] = photo_format(photo['width'], photo['height'])
+    photo['src'] = data[:media_url] + ":#{size}"
+    photo['src_full'] = data[:media_url]
+
+    return photo
+  end
+
+  # video
+
+  def has_video?
+    defined?(@post[:extended_entities][:media][0][:type]) && @post[:extended_entities][:media][0][:type] = "video"
+  end
+
+  def video
+    #puts @post[:extended_entities][:media][0]
+    video = Hash.new
+    video['provider'] = get_video_provider(@post[:extended_entities][:media][0][:media_url])
+    video['source'] = parse_video(@post[:extended_entities][:media][0][:media_url])
+
+    return video
+  end
+
+  # Quote
+  # Internal: inside twitter, external: only link - Twitter doesn't fetch for us (everytime) the infos (picture, title, description...)
+
+  def has_int_quote?
+    @post[:is_quote_status] && defined?(@post[:quoted_status][:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
+  end
+
+  def has_int_quote_photo?
+    defined?(@post[:quoted_status][:extended_entities][:media][0][:media_url]) && @post[:quoted_status][:extended_entities][:media][0][:type] == 'photo'
+  end
+
+  def int_quote
+    quote = Hash.new
+    quote['link'] = @post[:entities][:urls][0][:expanded_url] # Get the last url (usually the twitter status)
+    quote['picture'] = "#{@post[:quoted_status][:extended_entities][:media][0][:media_url]}:small" if has_int_quote_photo?
+    quote['source'] = @post[:quoted_status][:user][:screen_name]
+    quote['title'] = @post[:quoted_status][:user][:name]
+    quote['description'] = parse_message(@post[:quoted_status][:full_text])
+
+    return quote
+
+  end
+
+  def has_ext_quote?
+    !@post[:is_quote_status] && defined?(@post[:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
+  end
+
+  def has_ext_quote_video?
+    !get_video_provider(@post[:entities][:urls][0][:expanded_url]).empty?
+  end
+
+  def is_ext_quote_facebook? # Can't fetch facebook page without login (captcha asked)
+    MetaInspector.new(@post[:entities][:urls][0][:expanded_url]).host =~ /www.facebook.com/
+  end
+
+  def ext_quote_video
+    video = Hash.new
+    video['provider'] = get_video_provider(@post[:entities][:urls][0][:expanded_url])
+    video['source'] = parse_video(get_deep_link(@post[:entities][:urls][0][:expanded_url]))
+
+    return video
+  end
+
+  def ext_quote
+    page = MetaInspector.new(@post[:entities][:urls][0][:expanded_url])
+    quote = Hash.new
+    quote['link'] = @post[:entities][:urls][0][:expanded_url]
+
+    # Use the fetched Twitter picture if existing
+    quote['picture'] = has_photo? ? @post[:extended_entities][:media][0][:media_url] + ":small" : page.images.best
+
+    quote['source'] = page.host
+    quote['title'] = page.best_title
+    quote['description'] = page.best_description
+
+    return quote
+
+  end
+
+  # Message
+
+  def has_message?
+    @post.has_key?(:full_text)
+  end
+
+  def parse_message(text)
+    text = text.gsub(/(http|https):\/\/t.co[a-z0-9._\/-]+$/i,'') # Remove the tweet's url included in the text at the end
+    text = text.gsub(/(http|https):\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
     text = text.gsub(/@([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_]+)/i, '<a class="mention" href="http://twitter.com/\1">@\1</a>')
     text = text.gsub(/\#([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_-]+)/i, '<a class="hashtag" href="http://twitter.com/search?q=%23\1">#\1</a>')
     return text
   end
 
-  # @params size: thumb, small, medium, large
-  def photo(size)
-    <<-CODE
-      <img src="#{@post[:extended_entities][:media][0][:media_url]}:#{size}" />
-    CODE
+  # Infos
+
+  def parse_profile_image(link)
+    return link.gsub('_normal', '') # Remove size attribute at the end to get the biggest image
   end
 
-  def status
-    <<-CODE
-      <p class="status" id="#{@post[:id_str]}">#{parse_text(@post[:full_text])}</p>
-    CODE
-  end
+  def user_info
+    user = Hash.new
+    user['username'] = @post[:user][:screen_name]
+    user['profile_image'] = parse_profile_image(@post[:user][:profile_image_url])
+    user['url'] = "http://twitter.com/#{@post[:user][:screen_name]}"
+    user['name'] = @post[:user][:name]
 
-  def has_photo?
-    defined?(@post[:extended_entities][:media][0][:type] = "photo")
-  end
-
-  def has_quoted_status?
-    @post[:is_quote_status] && defined?(@post[:quoted_status][:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
-  end
-
-  def has_quoted_status_with_photo?
-    defined?(@post[:quoted_status][:entities][:media][0][:media_url])
-  end
-
-  def quoted_status
-    <<-CODE
-        <blockquote cite="#{@post[:quoted_status][:entities][:urls][0][:expanded_url]}">
-          <a href="http://twitter.com/#{@post[:quoted_status][:user][:screen_name]}">
-            #{quoted_status_photo if has_quoted_status_with_photo?}
-            <h2></h2>
-            <p class="desc">#{parse_text(@post[:quoted_status][:full_text])}</p>
-            <cite>#{@post[:quoted_status][:user][:name]}</cite>
-          </a>
-        </blockquote>
-    CODE
-  end
-
-  def quoted_status_photo
-    <<-CODE
-      <p class="story_img">
-        <a href="#{@post[:quoted_status][:entities][:urls][0][:expanded_url]}">
-          <img src="#{@post[:quoted_status][:entities][:media][0][:media_url]}:thumb">
-        </a>
-      </p>
-    CODE
+    return user
   end
 
   def meta_info
-    <<-CODE
-      <p class="info left">
-        <span class="icon-twitter"></span>
-        <span class="user"><a href="http://twitter.com/#{@post[:user][:screen_name]}">#{@post[:user][:name]}</a></span>
-      </p>
-      <p class="info right">
-      <time pubdate datetime="#{created_time}">#{created_time}</time>
-        <a href="https://twitter.com/intent/tweet?in_reply_to=#{@post[:id_str]}" class="icon-reply"></a>
-        <a href="https://twitter.com/intent/retweet?tweet_id=#{@post[:id_str]}" class="icon-loop"></a>
-        <a href="https://twitter.com/intent/favorite?tweet_id=#{@post[:id_str]}" class="icon-heart"></a>
-      </p>
-    CODE
+    meta = Hash.new
+    meta['permalink'] = "http://twitter.com/#{@post[:user][:screen_name]}/status/#{@post[:id_str]}"
+    meta['share_url'] = @post[:id_str]
+    meta['created_time'] = "#{created_time}"
+
+    return meta
   end
 
 end

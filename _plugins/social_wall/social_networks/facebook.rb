@@ -1,6 +1,11 @@
+require_relative 'shared_methods.rb'
 require 'koala'
+require 'fileutils'
+require 'mini_magick'
+require "net/http"
 
 class FB
+  include SharedMethods
 
   def initialize(post, created_time)
     @post = post
@@ -8,135 +13,196 @@ class FB
   end
 
   def created_time
-    DateTime.parse(@created_time).change(:offset => "-0800")
+    DateTime.parse(@created_time)
   end
 
   def self.new_connection
     @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'], ENV['FACEBOOK_SECRET'])
   end
 
-  def self.get(meth, username, limit)
+  def self.get(meth, username, amount)
     posts_FB = []
 
     FB.new_connection
 
-    posts_FB = FB.method(meth).call(username, limit)
+    posts_FB = FB.method(meth).call(username, amount)
 
-    return posts_FB.map{ |post| FB.new(post, post[:created_time]) }
+    return posts_FB.map{ |post| FB.new(post, post['created_time']) }
   end
 
-  def self.connections(username, limit)
-    return Tools.transform_keys_to_symbols(@graph.get_connections(username,'posts',{limit: limit}))
+  def self.connections(username, count)
+    @graph.get_connections(username,'posts',{limit: count})
   end
 
   def self.get_object(object)
-    return Tools.transform_keys_to_symbols(@graph.get_object(object))
+    @graph.get_object(object)
   end
 
+  # Get picture with the following standard size: thumbnail, album, normal
+  # Don't return width & height data
   def self.get_picture_data(object_id, size)
-    return Tools.transform_keys_to_symbols(@graph.get_picture_data(object_id, :type => size))
+    @graph.get_picture_data(object_id, 'type' => size)
   end
 
-  def render
-    html = String.new
 
-    if post_valid?
-      html << "<div class='facebook_status #{@post[:type]}'>"
-      html << photo if has_photo?
-      html << video if has_video?
-      html << shared_story if has_shared_story?
-      html << message
-      html << meta_info
-      html << "</div>"
-    end
 
-    return html || ""
+  def standardize
+    puts @post['id']
+    post = Hash.new
+
+    post['social_network'] = 'facebook'
+
+    post['photo'] = photo if has_photo?
+    post['video'] = video if has_video?
+
+    post['ext_quote'] = ext_quote if has_ext_quote?
+
+    post['message'] = parse_message(@post['message']) if has_message?
+    post['user'] = user_info
+    post['meta'] = meta_info
+
+    return post
   end
 
-  def post_valid?
-    !@post[:message].nil? && ['photo','video'].include?(@post[:type]) || (@post[:type] == 'link' && @post[:status_type] == 'shared_story')
-  end
+
+
+  # Photo
 
   def has_photo?
-    @post[:type] == 'photo'
+    @post['type'] == 'photo'
   end
 
   def photo
-    picture_url = FB.get_picture_data(@post[:object_id], 'normal')[:data][:url] # must be one of the following values: thumbnail, album, normal
+    data = FB.get_object(@post['object_id'])
+    src_full = FB.get_picture_data(@post['object_id'], 'normal')['data']['url']
 
-    return  <<-CODE
-        <img src="#{picture_url}"/>
-    CODE
+    photo = Hash.new
+    photo['width'] = data['width'].to_i
+    photo['height'] = data['height'].to_i
+    photo['format'] = photo_format(photo['width'], photo['height'])
+    photo['src'] = data['source']
+    photo['src_full'] = src_full
+
+    return photo
   end
+
+  # Video
 
   def has_video?
-    @post[:type] == 'video'
-  end
-
-  def is_facebook_video?
-    @post[:source] =~ /^https:\/\/(video.xx.fbcdn.net|scontent.xx.fbcdn.net)/i
+    @post['type'] == 'video'
   end
 
   def video
-    if is_facebook_video?
-      <<-CODE
-        <video controls>
-          <source src="#{@post[:source]}" type="video/mp4">
-          Your browser does not support the video tag.
-          <a href="#{@post[:link]}"><img src="#{@post[:picture]}"/></a>
-        </video>
-      CODE
-    else # Youtube, Dailymotion, Vimeo, more?
-      <<-CODE
-        <iframe src="#{parse_video(@post[:source])}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-      CODE
+    video = Hash.new
+    video['provider'] = get_video_provider(@post['source'])
+    video['source'] = parse_video(@post['source'])
+    video['link'] = @post['link']
+    video['picture'] = @post['picture']
+
+    return video
+  end
+
+  # Quote
+
+  def has_ext_quote?
+    @post['type'] == 'link' && @post['status_type'] == 'shared_story'
+  end
+
+  def has_ext_quote_picture?
+    @post.has_key?('picture') && @post['picture'] != '' && url_exist?(parse_ext_quote_picture(@post['picture']))
+  end
+
+  def parse_ext_quote_picture(link)
+    link_parsed = CGI.parse(URI.parse(link).query)
+    return link_parsed.has_key?("url") ? link_parsed["url"][0] : link
+  end
+
+  def ext_quote_picture_resize(image_url)
+    image = MiniMagick::Image.open(image_url)
+    if image.type == 'PNG'
+      image.combine_options do |c|
+
+        c.background '#FFFFFF' # for transparent png
+        c.alpha 'remove'
+      end
     end
+    image.resize "300x300>" # proportional, only if larger
+    image.format 'jpg'
+    image.write("_example/images/social_wall/#{@post['id']}.jpg")
   end
 
-  def parse_video(lien)
-    # Remove autoplay
-    lien.gsub('autoplay=1', 'autoplay=0')
-    return lien
+  def ext_quote_picture
+    create_path('_example/images/social_wall') if !path_exist?('_example/images/social_wall')
+
+    image_url = parse_ext_quote_picture(@post['picture'])
+    ext_quote_picture_resize(image_url)
+
+    return "/images/social_wall/#{@post['id']}.jpg"
   end
 
-  def message
-    <<-CODE
-      <p class="status">#{parse_message(@post[:message])}</p>
-    CODE
+  def ext_quote
+    quote = Hash.new
+    quote['link'] = @post['link']
+    quote['picture'] = ext_quote_picture if has_ext_quote_picture?
+    quote['source'] = @post['caption']
+    quote['title'] = @post['name']
+    quote['description'] = @post['description']
+
+    return quote
+  end
+
+  def has_message_tags?
+    @post.has_key?('message_tags')
+  end
+
+  # Message
+
+  def has_message?
+    @post.has_key?('message')
   end
 
   def parse_message(text)
-    text = text.gsub(/http[s]:\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
+    # links
+    text = text.gsub(/(http|https):\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
+    # Hashtags
     text = text.gsub(/\#([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_-]+)/i, '<a class="hashtag" href="https://www.facebook.com/hashtag/\1">#\1</a>')
+    # Page, Group, user
+    if has_message_tags?
+
+      @post['message_tags'].each do |k, v|
+        v.each do |h|
+          text = text.gsub(/#{h["name"]}/, "<a class='mention' href='https://www.facebook.com/#{h["id"]}'>#{h["name"]}</a>")
+        end
+      end
+    end
+
     return text
   end
 
-  def has_shared_story?
-    @post[:type] == 'link' && @post[:status_type] == 'shared_story'
-  end
+  # Infos
 
-  def shared_story
-    <<-CODE
-      <blockquote cite="#{@post[:link]}">
-        <p class="story_img"><a href="#{@post[:link]}"><img src="#{@post[:picture]}"></a></p>
-        <h2>#{@post[:name]}</h2>
-        <p class="desc">#{@post[:description].truncate(70)}</p>
-        <cite>#{@post[:caption]}</cite>
-      </blockquote>
-    CODE
+  def user_info
+    username = FB.get_object(@post['from']['id'])['username']
+    picture = FB.get_picture_data(@post['from']['id'], 'normal')
+
+    user = Hash.new
+    user['username'] = username
+    user['profile_image'] = picture['data']['url']
+    user['url'] = "https://www.facebook.com/#{username}"
+    user['name'] = @post['from']['name']
+
+    return user
   end
 
   def meta_info
-    <<-CODE
-      <p class="info left">
-        <span class="icon-facebook"></span>
-        <span class="user"><a href="https://www.facebook.com/#{@post[:from][:name]}">#{@post[:from][:name]}</a></span>
-      </p>
-      <p class="info right">
-        <time pubdate datetime="#{created_time}">#{created_time}</time>
-        <a class="icon-share" href="http://www.facebook.com/share.php?v=4&amp;src=bm&amp;u=#{CGI.escape(@post[:link])}"></a>
-      </p>
-    CODE
+    meta = Hash.new
+    status_id = @post['id'].split('_')
+
+    meta['permalink'] = "http://www.facebook.com/permalink.php?story_fbid=#{status_id[1]}&id=#{status_id[0]}"
+    meta['share_url'] = CGI.escape(@post['link'].to_s)
+    meta['created_time'] = "#{created_time}"
+
+    return meta
   end
 
 end

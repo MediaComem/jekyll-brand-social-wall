@@ -1,40 +1,41 @@
-# Jekyll Social Wall :barber:
+# Jekyll Brand Social Wall :barber:
 A jekyll plugin to generate a social wall with your favorite social networks
 
-![](i/render_example.png)
+![](img_readme/render_example.png)
 
 ## What it does in 3 lines
  * Fetch your last posts from different social networks
  * Mix and sort them by date and time
  * Render HTML Markup
 
-## A Social Wall ?
+## Why you should use it
+ * Compare to all others js plugin, it doesn't expose any of your credentials
+ * No need of realtime update if yours social accounts have no more than few news every day
+ * Lightweight and cacheable
+
+## The Social Wall Definition
 
 A **social wall** is a posts aggregator from multiple social networks. It combines them, display them and give to the public an insight of the social activity and the latest news of a brand.
 
 Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggregator, Network wall, Tagboard
 
-### Various styles
+### Various layouts
 
-[![](i/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](i/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](i/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](i/social_wall-square.png) | ![](i/social_wall-timeline.png) |
+[![](img_readme/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](img_readme/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](img_readme/social_wall-square.png) | ![](img_readme/social_wall-timeline.png) |
  --- | --- | --- | --- | --- | --- | ---
- Flexible Layout | Images show | Pinterest-like | Windows style | Square |  Timeline | Another Layout?
+ Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout?
 
-Images from @Kombai under the MIT license
+Images from @Kombai plugin under the MIT license
 
 ### What do you want to highlight?
 Examples of criteria or questions you should ask yourself or your client:
+Some questions might need to improve this plugin !
 
- - Time of the post (Newest first usually)
- - A number of posts (by networks ? One network is preferred ?)
- - Hashtags filters
- - One or many accounts (external: retweet, hashtags,...)
- - A number of likes/retweet (Like a second choice critera)
- - Which media to prioritize ? Text vs Pictures ?
-
-## What you need to be aware of
-...
-
+ - Which number of posts to display (for all networks ? One network is preferred ?)
+ - Do you need Hashtags filters ?
+ - Show to your public one or many accounts (external: retweet, hashtags,...)
+ - Sort by ? Date (usually newest), most liked/retweet/favorite posts,...
+ - Which media to prioritize ? Text vs Pictures ? Video, GIF ?
 
 ## Installation
 
@@ -44,7 +45,7 @@ Examples of criteria or questions you should ask yourself or your client:
     - Create and app: https://developers.facebook.com/docs/apps/register
  - Twitter
     - https://dev.twitter.com/oauth/overview
-2. Create a `.env` file with your social networks credentials
+3. Create a `.env` file with your social networks credentials
 
   ```
   # Facebook credentials
@@ -59,7 +60,7 @@ Examples of criteria or questions you should ask yourself or your client:
   TWITTER_OAUTH_TOKEN=myoauthtoken
   TWITTER_OAUTH_TOKEN_SECRET=myoauthtokensecret
   ```
-3. Install the following gem by adding them to your `_config.yml` and running `bundle install`
+4. Install the following gem by adding them to your `_config.yml` and running `bundle install`
 
   ```yaml
   gem 'dotenv', :groups => [:development, :test]
@@ -68,15 +69,16 @@ Examples of criteria or questions you should ask yourself or your client:
 
   gem "twitter", "~> 6.0.0"
   ```
-4. Configure a webhook subscription every social network used
+5. Configure a webhook subscription every social network used
  - Facebook
     - https://developers.facebook.com/docs/graph-api/webhooks
  - Twitter
-    - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/ or probably https://ifttt.com/
-5. **Enjoy!**
+    - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/, https://ifttt.com/ ...
+6. Customize the html template by rewriting the ruby files inside the `social_networks` folder
+7. **Enjoy!**
 
 ## How To Use
-Add the following liquid tag in any of your layout. Every social network is optional.
+Add the following liquid tag in any of your layout or pages. Every social network is optional. Remove `??_username` to disable one.
 
 ```liquid
 {% social_wall
@@ -135,20 +137,13 @@ fb_count| exact number of posts needed| 10 | limited | 10
 </div>
 ```
 
-## Layout your social wall with JavaScript/jQuery
-There are multiple ways to layout your wall. Here are some grid systems:
-
-   * https://github.com/kombai/freewall
-   * http://masonry.desandro.com/
-   * http://isotope.metafizzy.co/
-   * https://github.com/dmdez/simple-masonry
-   * http://masonjs.com/
-   * https://github.com/liabru/jquery-match-height
-   * http://urin.github.io/jquery.tile.js/
-
-
 ## Futures Features
-- [ ] Multilingual Facebook posts
+- [ ] Stripping multilingual duplicate posts
+   - https://github.com/simplificator/babel
+   - https://github.com/feedbackmine/language_detector
+   - https://github.com/peterc/whatlanguage
+   - https://github.com/vhyza/language_detection
+   - https://github.com/detectlanguage/detectlanguage-ruby
 - [ ] Twitter Video/Gif support
 - [ ] Option to include hashtags posts for both Facebook and Twitter
 - [ ] Support for others social networks

@@ -1,3 +1,5 @@
+/* Social_wall Icons */
+
 @font-face {
   font-family: 'icomoon';
   src:  url('../assets/fonts/icomoon.eot?srxkgt');
@@ -26,147 +28,277 @@
   color:#858585;
 }
 
-.icon-undo2:before {
-  content: "\e967";
-}
-.icon-reply:before {
-  content: "\e96a";
-}
-.icon-heart:before {
-  content: "\e9da";
-}
-.icon-loop:before {
-  content: "\ea2d";
-}
-.icon-share:before {
-  content: "\ea7d";
-}
-.icon-facebook:before {
-  content: "\ea90";
-}
-.icon-facebook2:before {
-  content: "\ea91";
-}
-.icon-instagram:before {
-  content: "\ea92";
-}
-.icon-twitter:before {
-  content: "\ea96";
+body{
+  background-color: #ce0071;
 }
 
 .icon-twitter, .icon-facebook {
-  color:#ce0071;
+	color: #858585;
 }
-.icon-twitter{
-  color:#1da1f2;
+
+.icon-twitter:hover {
+	color: #1da1f2;
 }
-.icon-facebook{
-  color:#3b5998;
+
+.icon-facebook:hover {
+	color: #3b5998;
 }
+
 .icon-share:hover {
-  color:#3b5998;
+	color: #3b5998;
 }
+
 .icon-reply:hover {
-  color:#cc3399;
+	color: #cc3399;
 }
+
 .icon-loop:hover {
-  color:#19cf86;
+	color: #19cf86;
 }
+
 .icon-heart:hover {
-  color:#E2264D;
+	color: #E2264D;
 }
 
-body{
-  background-color: #ce0071;
-  background-image: url("http://uploads.webflow.com/5808c5805740fb8239ba0b9d/5811b0ec8c32a6c4213b42df_bkg_3.png");
-  background-position: 0px 0px;
-  background-size: cover;
-  color: #ce0071;
-  width: 1280px;
-  margin: auto;
-}
-#social_wall > div{
-  float:left;
-  background:#fff;
-  padding:20px;
-  width:28%;
-  margin:10px;
-  font-family: Montserrat, sans-serif;
+.social_wall {
+	color: #ce0071;
 }
 
-#social_wall > div > a > img, #social_wall > div > img, #social_wall > div > video, #social_wall > div > a > iframe{
-  width: 100%;
+.social_wall a {
+	text-decoration: none;
 }
 
-#social_wall > div p.status{
-  color:#858585;
-  font-size:12px;
-  line-height: 18px;
-  clear: both;
-  font-family:sans-serif;
-  padding-bottom: 10px;
-}
-#social_wall > div p.status a, #social_wall > div p.status a:visited, #social_wall > div p.status a:active, #social_wall > div p.status a:link{
-  color:#0087cd;
-  text-decoration: none;
-  font-size: 12px;
-}
-#social_wall > div p.status a:hover{
-  color:#666;
+.social_wall .container {
+	padding: 0;
+	padding: 40px 0;
 }
 
-#social_wall blockquote{
-  margin:0;
-  display: inline-block;
-  width: 100%;
-  background: #FAFAFA;
-  border: 1px solid #EFEFEF;
+.social_wall .item {
+	padding: 10px;
 }
 
-#social_wall blockquote .story_img{
-  margin: 10px;
-  float:left;
+.social_wall .item .wrap_status {
+	height: 410px;
+	background: #fff;
+	padding: 20px;
+	font-family: Montserrat, sans-serif;
+    /* Social_wall Blockquote */
+    /* Status/message */
+    /* Social_wall meta info */;
 }
 
-#social_wall blockquote h2{
-  font-size: 14px;
-  word-break: normal;
+.social_wall .item .wrap_status > a > img, .social_wall .item .wrap_status > img, .social_wall .item .wrap_status > a > iframe, .social_wall .item .wrap_status > iframe {
+	height: 207px;
+      /* Precise to avoid black line on iframe video */
+	width: 100%;
+	object-fit: cover;
+	font-family: 'object-fit: cover;';
 }
 
-#social_wall blockquote p.desc{
-  font-size: 12px;
-  color: #858585;
+.social_wall .item .wrap_status > video {
+      /* issue on webkit with cover */
+	height: 207px;
+      /* Precise to avoid black line on iframe video */
+	width: 100%;
+	object-fit: contain;
+	font-family: 'object-fit: contain;';
 }
 
-#social_wall blockquote cite{
-  font-size: 10px;
-  color: #b6b6b6;
+.social_wall .item .wrap_status blockquote {
+	overflow: hidden;
+	margin: 0;
+	padding: 20px;
+	height: 207px;
+	display: inline-block;
+	width: 100%;
+	background: #FAFAFA;
+	border: 1px solid #EFEFEF;
 }
 
-#social_wall p.info{
-  margin:0;
-}
-#social_wall p.info.left{
-  margin-bottom: -15px;
-}
-
-#social_wall p.info.right{
-  float:right;
-}
-#social_wall p.info.right a{
-  padding:2px;
+.social_wall .item .wrap_status blockquote .story_img {
+	float: left;
+	width: 130px;
+	padding-right: 10px;
 }
 
-#social_wall p.info span.user a{
-  color: #ce0071;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 24px;
-  color: #ce0071;
-  text-decoration: none;
+.social_wall .item .wrap_status blockquote .story_img img {
+	object-fit: cover;
+	height: 165px;
+  max-width: 100%;
 }
 
-#social_wall p.info time{
-  color: #b6b6b6;
-  font-size: 12px;
+.social_wall .item .wrap_status blockquote .wrap_story {
+	position: relative;
+	height: 150px;
+}
+
+.social_wall .item .wrap_status blockquote h1, .social_wall .item .wrap_status blockquote h1 a {
+	font-size: 14px;
+	line-height: 20px;
+	color: #ce0071;
+	word-break: normal;
+	margin: 0;
+}
+
+.social_wall .item .wrap_status blockquote p.desc {
+	font-size: 12px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #858585;
+}
+
+.social_wall .item .wrap_status blockquote p.desc a {
+	color: #858585;
+}
+
+.social_wall .item .wrap_status blockquote cite, .social_wall .item .wrap_status blockquote cite a {
+	font-size: 10px;
+	color: #b6b6b6;
+}
+
+.social_wall .item .wrap_status blockquote .status_box {
+	max-height: 165px;
+	position: relative;
+	overflow: hidden;
+}
+
+.social_wall .item .wrap_status blockquote .status_box .read_more {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	margin: 0;
+	padding: 30px 0;
+          /* "transparent" only works here because == rgba(0,0,0,0) */
+	background-image: linear-gradient(to bottom, transparent, #858585);
+}
+
+.social_wall .item .wrap_status .user_info {
+	padding-top: 15px;
+	margin-right: 0;
+}
+
+.social_wall .item .wrap_status .user_info .profil_image, .social_wall .item .wrap_status .user_info .user_info, .social_wall .item .wrap_status .user_info .wrap_user_name, .social_wall .item .wrap_status .user_info .icon_social {
+	margin: 0;
+	padding: 0;
+}
+
+.social_wall .item .wrap_status .user_info .profile_image {
+	margin-right: 5px;
+}
+
+.social_wall .item .wrap_status .user_info .profile_image img {
+          /*border-radius: 50%;*/
+	width: 55px;
+}
+
+.social_wall .item .wrap_status .user_info .wrap_user_name {
+	margin-left: -5px;
+	padding-top: 5px;
+}
+
+.social_wall .item .wrap_status .user_info .wrap_user_name .user, .social_wall .item .wrap_status .user_info .wrap_user_name .username {
+	padding: 0;
+	margin: 0;
+	line-height: 0;
+}
+
+.social_wall .item .wrap_status .user_info .wrap_user_name .user a {
+	font-size: 18px;
+	line-height: 24px;
+	color: #ce0071;
+}
+
+.social_wall .item .wrap_status .user_info .wrap_user_name .username a {
+	color: #b6b6b6;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 300;
+}
+
+.social_wall .item .wrap_status .user_info .icon_social {
+	padding-top: 10px;
+}
+
+.social_wall .item .wrap_status .user_info .icon_social span {
+	font-size: 25px;
+	float: right;
+}
+
+.social_wall .item .wrap_status .status_box {
+	height: 60px;
+	position: relative;
+	overflow: hidden;
+	clear: both;
+	margin: 0;
+}
+
+.social_wall .item .wrap_status .status_box p.status {
+	color: #858585;
+	font-size: 12px;
+	line-height: 18px;
+	font-family: sans-serif;
+	height: 40px;
+}
+
+.social_wall .item .wrap_status .status_box p.status a, .social_wall .item .wrap_status .status_box p.status a:visited, .social_wall .item .wrap_status .status_box p.status a:active, .social_wall .item .wrap_status .status_box p.status a:link {
+	color: #0087cd;
+	font-size: 12px;
+}
+
+.social_wall .item .wrap_status .status_box p.status a:hover {
+	color: #666;
+}
+
+.social_wall .item .wrap_status .status_box .read_more {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	margin: 0;
+	background-image: linear-gradient(to bottom, transparent, white);
+}
+
+.social_wall .item .wrap_status .status_box .read_more a {
+	width: 100%;
+	display: block;
+	height: 100%;
+}
+
+.social_wall .item .wrap_status > .link .status_box, .social_wall .item .wrap_status > .quoted .status_box {
+	max-height: 50px;
+	background-image: linear-gradient(to bottom, transparent, white);
+}
+
+.social_wall .item .wrap_status .meta_info {
+	position: absolute;
+	bottom: 20px;
+}
+
+.social_wall .item .wrap_status .meta_info a {
+	padding: 2px;
+}
+
+.social_wall .item .wrap_status .meta_info time {
+	color: #b6b6b6;
+	font-size: 12px;
+}
+
+.social_wall .item.text_only .wrap_status .status_box, .social_wall .item.link_not_fetch .wrap_status .status_box {
+	height: 100%;
+	overflow: none;
+}
+
+.social_wall .item.text_only .wrap_status .status_box p.status, .social_wall .item.link_not_fetch .wrap_status .status_box p.status {
+	font-size: 25px;
+	line-height: 36px;
+	height: 100%;
+}
+
+.social_wall .item.text_only .wrap_status .status_box p.status a, .social_wall .item.text_only .wrap_status .status_box p.status a:visited, .social_wall .item.text_only .wrap_status .status_box p.status a:active, .social_wall .item.text_only .wrap_status .status_box p.status a:link, .social_wall .item.link_not_fetch .wrap_status .status_box p.status a, .social_wall .item.link_not_fetch .wrap_status .status_box p.status a:visited, .social_wall .item.link_not_fetch .wrap_status .status_box p.status a:active, .social_wall .item.link_not_fetch .wrap_status .status_box p.status a:link {
+	font-size: 25px;
+	line-height: 31px;
 }

@@ -1,0 +1,99 @@
+{% assign type = "text" %}
+
+{% if photo %}{% assign type = "photo" %}{% endif %}
+
+{% if int_quote %}{% assign type = "int_quote" %}{% endif %}
+
+{% if ext_quote %}{% assign type = "ext_quote" %}{% endif %}
+
+{% if video %}{% assign type = "video" %}{% endif %}
+
+
+<div class='{{ social_network }}_status {{ type }} col-sm-6 col-md-4 item'>
+  <div class='wrap_status'>
+
+    {% if photo %}
+      <a data-featherlight="image" href="{{ photo.src_full }}">
+        <img src="{{ photo.src }}" class="{{ photo.format }}" width="{{ photo.width }}" height="{{ photo.height }}"/>
+      </a>
+    {% endif %}
+
+    {% if video %}
+      {% if video.provider == "facebook" %}
+
+      <video preload="auto" controls>
+        <source src="{{ video.source}}" type="video/mp4">
+        Your browser does not support the video tag.
+        <a href="{{ video.source }}"><img src="{{ video.picture }}"/></a>
+      </video>
+
+      {% else %}
+
+      <iframe src="{{ video.source }}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+      {% endif %}
+    {% endif %}
+
+    {% if int_quote %}
+
+      <blockquote cite="{{ int_quote.link }}">
+        {% if int_quote.picture %}
+
+          <p class="story_img"><a href="{{ int_quote.link }}"><img src="{{ int_quote.picture }}"></a></p>
+
+        {% endif %}
+        <div class="wrap_story">
+          <h1><a href="{{ int_quote.link }}">{{ int_quote.title }}</a></h1>
+          <p class="desc">{{ int_quote.description }}</p>
+        </div>
+      </blockquote>
+
+    {% endif %}
+
+    {% if ext_quote %}
+
+      <blockquote cite="{{ ext_quote.link }}">
+        {% if ext_quote.picture %}
+
+          <p class="story_img"><a href="{{ ext_quote.link }}"><img src="{{ ext_quote.picture }}"></a></p>
+
+        {% endif %}
+        <div class="wrap_story">
+          <cite>{{ ext_quote.source }}</cite>
+          <h1><a href="{{ ext_quote.link }}">{{ ext_quote.title }}</a></h1>
+          <p class="desc">{{ ext_quote.description }}</p>
+        </div>
+      </blockquote>
+
+    {% endif %}
+
+    <div class="user_info row">
+      <p class="profile_image col-xs-3">
+        <a href="{{ user.url }}"><img src="{{ user.profile_image }}" /></a>
+      </p>
+      <div class="wrap_user_name col-xs-8">
+        <h1 class="user"><a href="{{ user.url }}">{{ user.name }}</a></h1>
+        <h2 class="username"><a href="{{ user.url }}">@{{ user.username }}</a></h2>
+      </div>
+      <p class="icon_social col-xs-1">
+        <a href="{{ meta.permalink }}"><span class="icon-{{ social_network }}"></span></a>
+      </p>
+    </div>
+
+    <div class="status_box">
+      <p class="status desc">{{ message }}</p>
+    </div>
+
+    <p class="meta_info">
+      <time pubdate datetime="{{ meta.created_time }}">{{ meta.created_time }}</time>
+      {% if social_network == 'facebook' %}
+        <a class="icon-share" href="http://www.facebook.com/share.php?v=4&amp;src=bm&amp;u={{ meta.share_url }}"></a>
+      {% elsif social_network == 'twitter' %}
+        <a class="icon-reply" href="https://twitter.com/intent/tweet?in_reply_to={{ meta.share_url }}" ></a>
+        <a class="icon-loop" href="https://twitter.com/intent/retweet?tweet_id={{ meta.share_url }}" ></a>
+        <a class="icon-heart" href="https://twitter.com/intent/favorite?tweet_id=#{{ meta.share_url }}" ></a>
+      {% endif %}
+    </p>
+
+  </div>
+</div>

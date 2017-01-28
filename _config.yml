@@ -19,6 +19,7 @@ destination: _example
 
 # Build settings
 exclude:
+  - img_readme
   - Gemfile
   - Gemfile.lock
   - README.md
