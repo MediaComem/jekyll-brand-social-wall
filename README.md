@@ -9,8 +9,8 @@ A jekyll plugin to generate a social wall with your favorite social networks
  * Render HTML Markup
 
 ## Why you should use it
- * Compare to all others js plugin, it doesn't expose any of your credentials
- * No need of realtime update if yours social accounts have no more than few news every day
+ * Compared to all other js plugin, it doesn't expose any of your credentials
+ * No need of real time update if your social accounts have no more than few news every day
  * Lightweight and cacheable
 
 ## The Social Wall Definition
@@ -39,7 +39,7 @@ Some questions might need to improve this plugin !
 
 ## Installation
 
-1. Copy th folder `social_wall`  into `_plugins`  within your Jekyll project.
+1. Copy the folder `social_wall`  into `_plugins`  within your Jekyll project.
 2. Generate your social networks credentials
  - Facebook
     - Create and app: https://developers.facebook.com/docs/apps/register
@@ -68,6 +68,12 @@ Some questions might need to improve this plugin !
   gem "koala", "~> 2.2"
 
   gem "twitter", "~> 6.0.0"
+
+  gem "mini_magick"
+
+  gem 'nokogiri'
+
+  gem 'metainspector'
   ```
 5. Configure a webhook subscription every social network used
  - Facebook
@@ -83,11 +89,12 @@ Add the following liquid tag in any of your layout or pages. Every social networ
 ```liquid
 {% social_wall
 
-  tw_username: lausanne2020,
-  tw_count: 14,
+  fb_username: bbcnews,
+  fb_amount: 5,
 
-  fb_username: lausanne2020,
-  fb_count: 4,
+  tw_username: nytimes,
+  tw_amount: 4,
+  
 %}
 ```
 
@@ -106,48 +113,53 @@ fb_count| exact number of posts needed| 10 | limited | 10
 ## Output example
 
 ```html
-<div id='social_wall'>
-  <div class='facebook_status link'>
-    <p class="status">Lausanne2020 prend forme... Un point sur l'avancement des préparatifs, à (presque!) trois ans de la cérémonie d'ouverture!<a class="hashtag" href="https://www.facebook.com/hashtag/Lausanne2020">#Lausanne2020</a> <a class="hashtag" href="https://www.facebook.com/hashtag/thisiswhereitstarts">#thisiswhereitstarts</a> <a class="hashtag" href="https://www.facebook.com/hashtag/IloveYOG">#IloveYOG</a> <a class="hashtag" href="https://www.facebook.com/hashtag/24heures">#24heures</a></p>
-    <blockquote cite="http://www.24heures.ch/sports/lausanne-2020-promouvoir-savoirfaire-formation-suisse/story/15546197">
-      <p class="story_img"><a href="http://www.24heures.ch/sports/lausanne-2020-promouvoir-savoirfaire-formation-suisse/story/15546197"><img src="https://external.xx.fbcdn.net/safe_image.php?d=AQDRiWmt_TeB8kt1&w=130&h=130&url=http%3A%2F%2Fmcdn.newsnetz.ch%2Fstory%2F1%2F5%2F5%2F15546197%2Fpictures%2F1%2Fteaser_t_1024.jpg%3F1&cfs=1&sx=0&sy=0&sw=682&sh=682&_nc_hash=AQDWLuD6ChUhJcaG"></a></p>
-      <h2>Lausanne 2020 va promouvoir le savoir-faire et la formation suisse</h2>
-      <p class="desc">A trois ans de la grande fête du sport des 15-18 ans, les universités, les services cantonaux de l’éducation, les hautes écoles et la filière de l’apprentissage s’activent en coulisses.</p>
-      <cite>24heures.ch</cite>
-    </blockquote>
-    <p class="info">
-      <span class="icon">f</span>
-      <span class="user"><a href="https://www.facebook.com/Lausanne2020">Lausanne2020</a></span>
-      <time pubdate datetime="2016-12-27T19:32:12-08:00">2016-12-27T19:32:12-08:00</time>
-      <a class="share icon" href="http://www.facebook.com/share.php?v=4&amp;src=bm&amp;u=http%3A%2F%2Fwww.24heures.ch%2Fsports%2Flausanne-2020-promouvoir-savoirfaire-formation-suisse%2Fstory%2F15546197"></a>
+<div class='twitter_status ext_quote col-sm-6 col-md-4 item'>
+  <div class='wrap_status'>
+      <blockquote cite="http://nyti.ms/2kFGFHj">
+        <p class="story_img"><a href="http://nyti.ms/2kFGFHj"><img src="https://static01.nyt.com/images/2017/01/28/world/28muslim/28muslim-facebookJumbo.jpg"></a></p>
+        <div class="wrap_story">
+          <cite>www.nytimes.com</cite>
+          <h1><a href="http://nyti.ms/2kFGFHj">Fears That Trump’s Visa Ban Betrays Friends and Bolsters Enemies - The New York Times</a></h1>
+          <p class="desc">Officials, analysts and citizens across Muslim-majority countries said the order was a sign that President Trump sees Islam itself as the problem.</p>
+        </div>
+      </blockquote>
+    <div class="user_info row">
+      <p class="profile_image col-xs-3">
+        <a href="http://twitter.com/nytimes"><img src="http://pbs.twimg.com/profile_images/758384037589348352/KB3RFwFm.jpg" /></a>
+      </p>
+      <div class="wrap_user_name col-xs-8">
+        <h1 class="user"><a href="http://twitter.com/nytimes">The New York Times</a></h1>
+        <h2 class="username"><a href="http://twitter.com/nytimes">@nytimes</a></h2>
+      </div>
+      <p class="icon_social col-xs-1">
+        <a href="http://twitter.com/nytimes/status/825492425925861376"><span class="icon-twitter"></span></a>
+      </p>
+    </div>
+    <div class="status_box">
+      <p class="status desc">People across the Muslim world worry President Trump's executive order is a sign that he sees Islam as the problem </p>
+    </div>
+    <p class="meta_info">
+      <time pubdate datetime="2017-01-28T23:55:05+00:00">2017-01-28T23:55:05+00:00</time>
+        <a class="icon-reply" href="https://twitter.com/intent/tweet?in_reply_to=825492425925861376" ></a>
+        <a class="icon-loop" href="https://twitter.com/intent/retweet?tweet_id=825492425925861376" ></a>
+        <a class="icon-heart" href="https://twitter.com/intent/favorite?tweet_id=#825492425925861376" ></a>
     </p>
   </div>
-  <div class='twitter_status'>
-    <img src="http://pbs.twimg.com/media/C0XiRYMXAAAOIf4.jpg:small" />
-    <p class="status" id="812305374862835712">Official! Our Monobob,Skeleton &amp;Luge events will take place on the Olympic site of St-Moritz! <a href="https://t.co/lVMVg9Ca6W">https://t.co/lVMVg9Ca6W</a> <a class="mention" href="http://twitter.com/IBSFsliding">@IBSFsliding</a> <a class="mention" href="http://twitter.com/FIL_Luge">@FIL_Luge</a> </p>
-    <p class="info">
-      <span class="icon">t</span>
-      <span class="user"><a href="http://twitter.com/lausanne2020">Lausanne 2020</a></span>
-      <time pubdate datetime="2016-12-23T14:34:27-08:00">2016-12-23T14:34:27-08:00</time>
-      <a href="https://twitter.com/intent/favorite?tweet_id=812305374862835712" class="favorite icon">R</a>
-      <a href="https://twitter.com/intent/retweet?tweet_id=812305374862835712" class="retweet icon">J</a>
-      <a href="https://twitter.com/intent/tweet?in_reply_to=812305374862835712" class="tweet icon">h</a>
-    </p>
-  </div>
-</div>
 ```
 
 ## Futures Features
-- [ ] Stripping multilingual duplicate posts
+- [ ] Stripping multilingual duplicate posts (Facebook offer since 2016, multilingual post but doesn't support it in graph api)
    - https://github.com/simplificator/babel
    - https://github.com/feedbackmine/language_detector
    - https://github.com/peterc/whatlanguage
    - https://github.com/vhyza/language_detection
    - https://github.com/detectlanguage/detectlanguage-ruby
-- [ ] Twitter Video/Gif support
+- [ ] Twitter Video/Gif support (01/2017 Some wrong media type detection occurs with twitter api)
 - [ ] Option to include hashtags posts for both Facebook and Twitter
 - [ ] Support for others social networks
   - Instagram
+  - Youtube
   - Linkedin
   - Google+
   - VK
+  - ...
