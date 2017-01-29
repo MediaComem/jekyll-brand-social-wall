@@ -103,10 +103,10 @@ Add the following liquid tag in any of your layout or pages. Every social networ
 Name| Description|Default Value| Limitation | Example
 ----|----|----|----|----
 tw_username| any twitter username but only one! |  | | katyperry
-tw_count| exact number of tweets needed| 10 | [200](https://dev.twitter.com/rest/reference/get/statuses/user_timeline#parameters) | 36
+tw_amount| exact number of tweets needed| 10 | [200](https://dev.twitter.com/rest/reference/get/statuses/user_timeline#parameters) | 36
 tw_include_rts| retweets are fetched <sup>1</sup> | false | | true
 fb_username| any facebook username but only one! | | | bbcnews
-fb_count| exact number of posts needed| 10 | limited | 10
+fb_amount| exact number of posts needed| 10 | limited | 10
 
 1. No special template at the moment
 
@@ -156,6 +156,7 @@ fb_count| exact number of posts needed| 10 | limited | 10
    - https://github.com/detectlanguage/detectlanguage-ruby
 - [ ] Twitter Video/Gif support (01/2017 Some wrong media type detection occurs with twitter api)
 - [ ] Option to include hashtags posts for both Facebook and Twitter
+- [ ] Implement a global filter amount for all social networks
 - [ ] Support for others social networks
   - Instagram
   - Youtube
