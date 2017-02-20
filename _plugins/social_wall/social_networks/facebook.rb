@@ -3,6 +3,7 @@ require 'koala'
 require 'fileutils'
 require 'mini_magick'
 require "net/http"
+require 'uri'
 
 class FB
   include SharedMethods
@@ -17,7 +18,7 @@ class FB
   end
 
   def self.new_connection
-    @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'], ENV['FACEBOOK_SECRET'])
+    @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'])
   end
 
   def self.get(meth, username, amount)
@@ -51,6 +52,7 @@ class FB
     post = Hash.new
 
     post['social_network'] = 'facebook'
+
 
     post['photo'] = photo if has_photo?
     post['video'] = video if has_video?
@@ -128,11 +130,11 @@ class FB
     end
     image.resize "300x300>" # proportional, only if larger
     image.format 'jpg'
-    image.write("_example/images/social_wall/#{@post['id']}.jpg")
+    image.write("_site/images/social_wall/#{@post['id']}.jpg")
   end
 
   def ext_quote_picture
-    create_path('_example/images/social_wall') if !path_exist?('_example/images/social_wall')
+    create_path('_site/images/social_wall') if !path_exist?('_site/images/social_wall')
 
     image_url = parse_ext_quote_picture(@post['picture'])
     ext_quote_picture_resize(image_url)
@@ -161,7 +163,7 @@ class FB
     @post.has_key?('message')
   end
 
-  def parse_message(text)
+  def parse_message(text="")
     # links
     text = text.gsub(/(http|https):\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
     # Hashtags

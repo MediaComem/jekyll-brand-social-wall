@@ -19,7 +19,7 @@
     {% endif %}
 
     {% if video %}
-      {% if video.provider == "facebook" %}
+      {% if video.provider == "facebook" or video.provider == "twitter"  %}
 
       <video preload="auto" controls>
         <source src="{{ video.source}}" type="video/mp4">

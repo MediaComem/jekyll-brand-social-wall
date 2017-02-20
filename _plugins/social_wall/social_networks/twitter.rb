@@ -1,6 +1,7 @@
 require_relative 'shared_methods.rb'
 require 'twitter'
 require 'metainspector'
+require 'resolv'
 
 class TW
   include SharedMethods
@@ -60,10 +61,10 @@ class TW
     post = Hash.new
 
     post['social_network'] = 'twitter'
-    #post['type'] = @post['type'] if has_type? || 'text_only'
 
     post['photo'] = photo(:small) if has_photo? && (!has_ext_quote? || is_ext_quote_facebook?)
-    #post['video'] = video if has_video?
+    post['video'] = video if has_video?
+
     post['video'] = ext_quote_video if has_ext_quote? && has_ext_quote_video?
 
     post['int_quote'] = int_quote if has_int_quote?
@@ -104,14 +105,19 @@ class TW
   # video
 
   def has_video?
-    defined?(@post[:extended_entities][:media][0][:type]) && @post[:extended_entities][:media][0][:type] = "video"
+    defined?(@post[:extended_entities][:media][0][:type]) && @post[:extended_entities][:media][0][:type] == "video"
   end
 
   def video
-    #puts @post[:extended_entities][:media][0]
+    variants = @post[:extended_entities][:media][0][:video_info][:variants]
+    selected_video = variants.select {|item| item[:content_type] == "video/mp4"}
+                   .max_by{|item| item[:bitrate]}
+
     video = Hash.new
-    video['provider'] = get_video_provider(@post[:extended_entities][:media][0][:media_url])
-    video['source'] = parse_video(@post[:extended_entities][:media][0][:media_url])
+    video['provider'] = 'twitter'
+    video['source'] = parse_video(selected_video[:url])
+
+    video['picture'] = @post[:extended_entities][:media][0][:media_url]
 
     return video
   end
@@ -120,7 +126,7 @@ class TW
   # Internal: inside twitter, external: only link - Twitter doesn't fetch for us (everytime) the infos (picture, title, description...)
 
   def has_int_quote?
-    @post[:is_quote_status] && defined?(@post[:quoted_status][:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
+    @post.has_key?(:is_quote_status) && @post[:is_quote_status] == true
   end
 
   def has_int_quote_photo?
@@ -140,7 +146,7 @@ class TW
   end
 
   def has_ext_quote?
-    !@post[:is_quote_status] && defined?(@post[:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
+    !@post.has_key?(:is_quote_status) && @post[:is_quote_status] != true && defined?(@post[:entities][:urls][0][:expanded_url]) # if expanded_url doesn't exist it means that the shared tweet is not available anymore
   end
 
   def has_ext_quote_video?
@@ -181,7 +187,7 @@ class TW
     @post.has_key?(:full_text)
   end
 
-  def parse_message(text)
+  def parse_message(text="")
     text = text.gsub(/(http|https):\/\/t.co[a-z0-9._\/-]+$/i,'') # Remove the tweet's url included in the text at the end
     text = text.gsub(/(http|https):\/\/[a-z0-9._\/-]+/i, '<a href="\0">\0</a>')
     text = text.gsub(/@([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_]+)/i, '<a class="mention" href="http://twitter.com/\1">@\1</a>')

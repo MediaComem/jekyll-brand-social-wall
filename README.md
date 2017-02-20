@@ -94,7 +94,7 @@ Add the following liquid tag in any of your layout or pages. Every social networ
 
   tw_username: nytimes,
   tw_amount: 4,
-  
+
 %}
 ```
 
@@ -154,7 +154,8 @@ fb_amount| exact number of posts needed| 10 | limited | 10
    - https://github.com/peterc/whatlanguage
    - https://github.com/vhyza/language_detection
    - https://github.com/detectlanguage/detectlanguage-ruby
-- [ ] Twitter Video/Gif support (01/2017 Some wrong media type detection occurs with twitter api)
+- Cache + performance improvement
+- [ ] Twitter Gif support
 - [ ] Option to include hashtags posts for both Facebook and Twitter
 - [ ] Implement a global filter amount for all social networks
 - [ ] Support for others social networks

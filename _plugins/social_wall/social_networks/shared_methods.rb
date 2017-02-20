@@ -26,13 +26,17 @@ module SharedMethods
     url =~ /https?:\/\/.*dailymotion\.com\/.*\d+/
   end
 
-  def get_video_provider(url)
-    url = get_deep_link(url)
+  def get_video_provider(url, is_deep_url_test = false)
 
     return "facebook" if is_facebook_video?(url)
     return "youtube" if is_youtube_video?(url)
     return "vimeo" if is_vimeo_video?(url)
     return "dailymotion" if is_dailymotion_video?(url)
+
+    # Against bit.ly
+    if !is_deep_url_test
+      get_video_provider(get_deep_link(url), true)
+    end
 
     return ""
   end
@@ -72,15 +76,23 @@ module SharedMethods
     false #false if can't find the server
   end
 
-  # Against shortener URL services...
-  def get_deep_link(url)
-    r = Net::HTTP.get_response(URI.parse(url))
+  # http://ruby-doc.org/stdlib-2.4.0/libdoc/net/http/rdoc/Net/HTTP.html
+  def get_deep_link(uri_str, limit = 3)
+  # You should choose a better exception.
+  raise ArgumentError, 'too many HTTP redirects' if limit == 0
 
-    if [301, 302].include?(r.code.to_i)
-      get_deep_link(r.header['location']) # Go after any redirect and make sure you can access the redirected URL
-    else
-      return url
-    end
+  response = Net::HTTP.get_response(URI(uri_str))
+
+  case response
+  when Net::HTTPSuccess then
+    response
+  when Net::HTTPRedirection then
+    location = response['location']
+    warn "redirected to #{location}"
+    get_deep_link(location, limit - 1)
+  else
+    response.value
   end
+end
 
 end
