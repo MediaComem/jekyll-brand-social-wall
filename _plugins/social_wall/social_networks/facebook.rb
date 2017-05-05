@@ -3,7 +3,9 @@ require 'koala'
 require 'fileutils'
 require 'mini_magick'
 require "net/http"
+require 'metainspector'
 require 'uri'
+require "open-uri"
 
 class FB
   include SharedMethods
@@ -99,7 +101,11 @@ class FB
     video['provider'] = get_video_provider(@post['source'])
     video['source'] = parse_video(@post['source'])
     video['link'] = @post['link']
-    video['picture'] = @post['picture']
+
+    picture_formats = FB.get_object(1777916805855413)['format']
+    i_avg = (picture_formats.length.to_f/2).round # get the average quality
+
+    video['picture'] = picture_formats[i_avg-1]['picture']
 
     return video
   end
@@ -120,10 +126,19 @@ class FB
   end
 
   def ext_quote_picture_resize(image_url)
-    image = MiniMagick::Image.open(image_url)
+
+    # Prevent filename errors by saving first
+    path = "/tmp/"
+
+    create_path(path) unless path_exist?(path)
+    File.open(File.join(path, @post['id']), 'wb') do |fo|
+      fo.write open(image_url).read
+    end
+
+    # Resizing and converting image
+    image = MiniMagick::Image.open(File.join(path, @post['id']))
     if image.type == 'PNG'
       image.combine_options do |c|
-
         c.background '#FFFFFF' # for transparent png
         c.alpha 'remove'
       end
@@ -134,18 +149,18 @@ class FB
   end
 
   def ext_quote_picture
-    create_path('_site/images/social_wall') if !path_exist?('_site/images/social_wall')
-
+    create_path('_site/images/social_wall') unless path_exist?('_site/images/social_wall')
     image_url = parse_ext_quote_picture(@post['picture'])
     ext_quote_picture_resize(image_url)
 
     return "/images/social_wall/#{@post['id']}.jpg"
   end
 
+
   def ext_quote
     quote = Hash.new
     quote['link'] = @post['link']
-    quote['picture'] = ext_quote_picture if has_ext_quote_picture?
+    quote['picture'] = has_ext_quote_picture? ? ext_quote_picture : get_url_best_picture(quote['link'])
     quote['source'] = @post['caption']
     quote['title'] = @post['name']
     quote['description'] = @post['description']
@@ -153,11 +168,11 @@ class FB
     return quote
   end
 
+  # Message
+
   def has_message_tags?
     @post.has_key?('message_tags')
   end
-
-  # Message
 
   def has_message?
     @post.has_key?('message')
@@ -170,10 +185,9 @@ class FB
     text = text.gsub(/\#([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_-]+)/i, '<a class="hashtag" href="https://www.facebook.com/hashtag/\1">#\1</a>')
     # Page, Group, user
     if has_message_tags?
-
       @post['message_tags'].each do |k, v|
         v.each do |h|
-          text = text.gsub(/#{h["name"]}/, "<a class='mention' href='https://www.facebook.com/#{h["id"]}'>#{h["name"]}</a>")
+          text = text.gsub(/\s(#{h["name"]})\s/, " <a class='mention' href='https://www.facebook.com/#{h["id"]}'>@#{h["name"]}</a> ")
         end
       end
     end

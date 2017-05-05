@@ -1,6 +1,7 @@
 require 'dotenv'
 require_relative 'social_networks/twitter'
 require_relative 'social_networks/facebook'
+require_relative 'social_networks/instagram'
 
 module Jekyll
 
@@ -16,6 +17,7 @@ module Jekyll
       @config['tw_include_rts']   ||= false
       @config['fb_amount']        ||= 10
       @config['tw_amount']        ||= 10
+      @config['insta_amount']        ||= 10
 
       @layout = Liquid::Template.parse(
                     File.read("_layouts/social_wall.html").chomp
@@ -48,11 +50,21 @@ module Jekyll
       []
     end
 
+    def has_instagram_settings?
+      @config.key?('insta_username')
+    end
+
+    def instagram_posts
+      return INSTA.get(:user_recent_media, @config['insta_username'], @config['insta_amount']) if has_instagram_settings?
+      []
+    end
+
     def mix_posts
       mix_posts = []
 
       mix_posts += facebook_posts
       mix_posts += twitter_posts
+      mix_posts += instagram_posts
 
       mix_posts
         .sort_by { |post| post.created_time }
