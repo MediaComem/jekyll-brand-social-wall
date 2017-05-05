@@ -25,7 +25,7 @@ Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggrega
 |--- | --- | --- | --- | --- | --- | --- |
 | Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout? |
 
-Images from @Kombai plugin under the MIT license
+Images from [@Kombai plugin](https://github.com/kombai/freewall) under the MIT license
 
 ### What do you want to highlight?
 Examples of criteria or questions you should ask yourself or your client:
