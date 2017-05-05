@@ -21,9 +21,9 @@ Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggrega
 
 ### Various layouts
 
-[![](img_readme/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](img_readme/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](img_readme/social_wall-square.png) | ![](img_readme/social_wall-timeline.png)
- --- | --- | --- | --- | --- | --- | ---
- Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout?
+|[![](img_readme/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](img_readme/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](img_readme/social_wall-square.png) | ![](img_readme/social_wall-timeline.png) | |
+|--- | --- | --- | --- | --- | --- | --- |
+| Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout? |
 
 Images from @Kombai plugin under the MIT license
 
