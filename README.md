@@ -21,7 +21,7 @@ Synonyms: Social.... Flow, Feeds, Board, Stream, Wall, Cards, Hub, Media Aggrega
 
 ### Various layouts
 
-[![](img_readme/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](img_readme/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](img_readme/social_wall-square.png) | ![](img_readme/social_wall-timeline.png) |
+[![](img_readme/social_wall-1c968.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-87882.png)](https://github.com/kombai/freewall)  | [![](img_readme/social_wall-2780a.png)](https://github.com/kombai/freewall)  |  [![](img_readme/social_wall-4a303.png)](https://github.com/kombai/freewall) | ![](img_readme/social_wall-square.png) | ![](img_readme/social_wall-timeline.png)
  --- | --- | --- | --- | --- | --- | ---
  Flexible Layout | Images show | Pinterest-like | Windows style | Fixed size |  Timeline | Another Layout?
 
@@ -45,6 +45,8 @@ Some questions might need to improve this plugin !
     - Create and app: https://developers.facebook.com/docs/apps/register
  - Twitter
     - https://dev.twitter.com/oauth/overview
+ - Instagram
+    - https://www.instagram.com/developer/
 3. Create a `.env` file with your social networks credentials
 
   ```
@@ -59,6 +61,13 @@ Some questions might need to improve this plugin !
   TWITTER_CONSUMER_SECRET= myconsumersecret
   TWITTER_OAUTH_TOKEN=myoauthtoken
   TWITTER_OAUTH_TOKEN_SECRET=myoauthtokensecret
+
+  # Instagram credentials
+
+  INSTAGRAM_ID=myclientid
+  INSTAGRAM_SECRET=myclientsecret
+  INSTAGRAM_TOKEN=myaccesstoken
+
   ```
 4. Install the following gem by adding them to your `_config.yml` and running `bundle install`
 
@@ -69,17 +78,27 @@ Some questions might need to improve this plugin !
 
   gem "twitter", "~> 6.0.0"
 
+  gem "hashie"
+
+  gem "sinatra"
+
+  gem "instagram", :git => 'git://github.com/gunnertech/instagram-ruby-gem.git'
+
   gem "mini_magick"
 
   gem 'nokogiri'
 
   gem 'metainspector'
+
+  gem 'packr'
   ```
-5. Configure a webhook subscription every social network used
+5. Configure a webhook subscription every social network used / (you can as well setup a cron for easier configuration)
  - Facebook
     - https://developers.facebook.com/docs/graph-api/webhooks
  - Twitter
     - doesn't have their own Webhook service but you can use : https://zapier.com/zapbook/twitter/webhook/, https://ifttt.com/ ...
+ - Instagram
+    - https://zapier.com/zapbook/instagram/webhook/
 6. Customize the html template by rewriting the ruby files inside the `social_networks` folder
 7. **Enjoy!**
 
@@ -94,6 +113,9 @@ Add the following liquid tag in any of your layout or pages. Every social networ
 
   tw_username: nytimes,
   tw_amount: 4,
+
+  insta_username: 4454516,
+  insta_amount: 4
 
 %}
 ```
@@ -148,20 +170,18 @@ fb_amount| exact number of posts needed| 10 | limited | 10
 ```
 
 ## Futures Features
+- [ ] Cache + performance improvement
+- [ ] Methods to include hashtags posts
+- [ ] Implement a global amount filter for all social networks
+- [ ] Support for others social networks
+  - Youtube
+  - Linkedin
+  - Google+
+  - VK
+  - ...
 - [ ] Stripping multilingual duplicate posts (Facebook offer since 2016, multilingual post but doesn't support it in graph api)
    - https://github.com/simplificator/babel
    - https://github.com/feedbackmine/language_detector
    - https://github.com/peterc/whatlanguage
    - https://github.com/vhyza/language_detection
    - https://github.com/detectlanguage/detectlanguage-ruby
-- Cache + performance improvement
-- [ ] Twitter Gif support
-- [ ] Option to include hashtags posts for both Facebook and Twitter
-- [ ] Implement a global filter amount for all social networks
-- [ ] Support for others social networks
-  - Instagram
-  - Youtube
-  - Linkedin
-  - Google+
-  - VK
-  - ...
