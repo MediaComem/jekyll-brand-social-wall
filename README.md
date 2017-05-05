@@ -114,7 +114,7 @@ Add the following liquid tag in any of your layout or pages. Every social networ
   tw_username: nytimes,
   tw_amount: 4,
 
-  insta_username: 4454516,
+  insta_username: 0123456789,
   insta_amount: 4
 
 %}
@@ -124,13 +124,17 @@ Add the following liquid tag in any of your layout or pages. Every social networ
 
 Name| Description|Default Value| Limitation | Example
 ----|----|----|----|----
+fb_username| any facebook username but only one! | | | bbcnews
+fb_amount| exact number of posts needed| 10 | limited | 10
 tw_username| any twitter username but only one! |  | | katyperry
 tw_amount| exact number of tweets needed| 10 | [200](https://dev.twitter.com/rest/reference/get/statuses/user_timeline#parameters) | 36
 tw_include_rts| retweets are fetched <sup>1</sup> | false | | true
-fb_username| any facebook username but only one! | | | bbcnews
-fb_amount| exact number of posts needed| 10 | limited | 10
+insta_username| id of a user associated with your access token <sup>2</sup> |  | limited by token | 0123456789
+insta_amount| exact number of posts needed| 10 | limited: sandbox mode [20](https://www.instagram.com/developer/sandbox/) | 10
+
 
 1. No special template at the moment
+2. The id is the first part of your access token
 
 ## Output example
 
