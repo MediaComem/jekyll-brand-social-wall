@@ -174,7 +174,7 @@ insta_amount| exact number of posts needed| 10 | limited: sandbox mode [20](http
 ```
 
 ## Futures Features
-- [ ] Cache + performance improvement
+- [ ] Cache + performance improvement (by saving the post and retrieving only new one)
 - [ ] Methods to include hashtags posts
 - [ ] Implement a global amount filter for all social networks
 - [ ] Support for others social networks
@@ -183,6 +183,9 @@ insta_amount| exact number of posts needed| 10 | limited: sandbox mode [20](http
   - Google+
   - VK
   - ...
+- [ ] Improve content management
+  - Support for multiple video quality (for complex video player)
+  - Replace uri by open-uri and improve speed for fetching webpage
 - [ ] Stripping multilingual duplicate posts (Facebook offer since 2016, multilingual post but doesn't support it in graph api)
    - https://github.com/simplificator/babel
    - https://github.com/feedbackmine/language_detector
