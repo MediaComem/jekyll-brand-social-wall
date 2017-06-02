@@ -41,7 +41,7 @@ class FB
     @graph.get_object(object)
   end
 
-  # Get picture with the following standard size: thumbnail, album, normal
+  # Get picture with the following standard size: small, normal, album, large, square
   # Don't return width & height data
   def self.get_picture_data(object_id, size)
     @graph.get_picture_data(object_id, 'type' => size)
@@ -54,7 +54,6 @@ class FB
     post = Hash.new
 
     post['social_network'] = 'facebook'
-
 
     post['photo'] = photo if has_photo?
     post['video'] = video if has_video?
@@ -73,18 +72,20 @@ class FB
   # Photo
 
   def has_photo?
-    @post['type'] == 'photo'
+    @post['type'] == 'photo' || @post['type'] == 'event'
   end
 
   def photo
     data = FB.get_object(@post['object_id'])
-    src_full = FB.get_picture_data(@post['object_id'], 'normal')['data']['url']
+    src_full = FB.get_picture_data(@post['object_id'], 'normal')['data']['url'] if @post['type'] == 'photo'
+    src_full = FB.get_object(@post['object_id'] +'?fields=cover')['cover']['source'] if @post['type'] == 'event'
 
     photo = Hash.new
     photo['width'] = data['width'].to_i
     photo['height'] = data['height'].to_i
     photo['format'] = photo_format(photo['width'], photo['height'])
     photo['src'] = data['source']
+    photo['src'] = src_full if @post['type'] == 'event'
     photo['src_full'] = src_full
 
     return photo
@@ -101,8 +102,9 @@ class FB
     video['provider'] = get_video_provider(@post['source'])
     video['source'] = parse_video(@post['source'])
     video['link'] = @post['link']
+    video['id'] = /\/videos\/(?:t\.\d+\/)?(\d+)/i.match(@post['link'])[1]
 
-    picture_formats = FB.get_object(1777916805855413)['format']
+    picture_formats = FB.get_object(video['id'])['format']
     i_avg = (picture_formats.length.to_f/2).round # get the average quality
 
     video['picture'] = picture_formats[i_avg-1]['picture']

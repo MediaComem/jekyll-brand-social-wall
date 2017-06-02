@@ -47,6 +47,7 @@ class INSTA
     post['social_network'] = 'instagram'
 
     post['photo'] = photo if has_photo?
+    post['video'] = video if has_video?
 
     post['message'] = parse_message(@post['caption']['text']) if has_message?
     post['user'] = user_info

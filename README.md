@@ -186,6 +186,7 @@ insta_amount| exact number of posts needed| 10 | limited: sandbox mode [20](http
 - [ ] Improve content management
   - Support for multiple video quality (for complex video player)
   - Replace uri by open-uri and improve speed for fetching webpage
+  - Add support for non-conventional media type like Instagram Carousel
 - [ ] Stripping multilingual duplicate posts (Facebook offer since 2016, multilingual post but doesn't support it in graph api)
    - https://github.com/simplificator/babel
    - https://github.com/feedbackmine/language_detector

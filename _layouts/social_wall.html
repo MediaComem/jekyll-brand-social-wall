@@ -1,53 +1,71 @@
-{% assign type = "text" %}{% assign media = "" %} {% if photo %}{% assign type = "photo" %}{% endif %} {% if int_quote %}
-{% assign type = "int_quote" %} {% unless int_quote.picture %}{% assign media = "no_media" %}{% endunless %} {% endif %}
+{% assign type = "text" %}{% assign media = "" %} 
+{% if photo %}{% assign type = "photo" %}{% endif %}
+{% if video %}{% assign type = "video" %}{% endif %} 
+{% if int_quote %}{% assign type = "int_quote" %} {% unless int_quote.picture %}{% assign media = "no_media" %}{% endunless %} {% endif %}
 {% if ext_quote %} {% assign type = "ext_quote" %} {% unless ext_quote.picture %}{% assign media = "no_media" %}{% endunless
-%} {% endif %} {% if video %}{% assign type = "video" %}{% endif %}
+%} {% endif %} 
 
 <div class='col-sm-6 col-md-4 item {{ social_network }}_status {{ type }} {{ media }}'>
   <div class="wrap_item">
     <div class='wrap_media'>
 
       {% if photo %}
-      <a data-featherlight="image" href="{{ photo.src_full }}">
-        <img src="{{ photo.src }}" class="grow {{ photo.format }}" width="{{ photo.width }}" height="{{ photo.height }}" />
-      </a>
-      {% endif %} {% if video %} {% if video.provider == "facebook" or video.provider == "twitter" %}
 
-      <video preload="auto" poster="{{ video.picture }}">
-        <source src="{{ video.source}}" type="video/mp4"> Your browser does not support the video tag.
-      </video>
+        <a data-featherlight="image" href="{{ photo.src_full }}">
+          <img src="{{ photo.src }}" class="grow {{ photo.format }}" width="{{ photo.width }}" height="{{ photo.height }}" />
+        </a>
 
-      {% else %}
+      {% endif %} 
+      
+      {% if video %} 
+      
+        {% if video.provider == "facebook" or video.provider == "twitter" or video.provider == "instagram" %}
 
-      <iframe src="{{ video.source }}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen
-        allowfullscreen></iframe>
+          <video preload="auto" poster="{{ video.picture }}" controlsList="nodownload">
+            <source src="{{ video.source}}" type="video/mp4"> Your browser does not support the video tag.
+          </video>
 
-      {% endif %} {% endif %} {% if int_quote %} {% if int_quote.picture %}
-      <a href="{{ int_quote.link }}">
-        <img class="grow" src="{{ int_quote.picture }}">
-      </a>
+        {% else %}
 
-      {% endif %}
+          <iframe src="{{ video.source }}" autoplay="0" frameborder="0" badge="0" portrait="0" byline="0" webkitallowfullscreen mozallowfullscreen
+            allowfullscreen></iframe>
 
-      <blockquote cite="{{ int_quote.link }}">
-        <h1><a href="{{ int_quote.link }}">{{ int_quote.title }}</a></h1>
-        <p class="desc">{{ int_quote.description }}</p>
-      </blockquote>
-
-
-      {% endif %} {% if ext_quote %} {% if ext_quote.picture %}
-
-      <a href="{{ ext_quote.link }}">
-        <img class="grow" src="{{ ext_quote.picture }}">
-      </a>
+        {% endif %} 
 
       {% endif %}
+      
+      {% if int_quote %} 
+      
+        {% if int_quote.picture %}
 
-      <blockquote cite="{{ ext_quote.link }}">
-        <cite>{{ ext_quote.source }}</cite>
-        <h1><a href="{{ ext_quote.link }}">{{ ext_quote.title }}</a></h1>
-        <p class="desc">{{ ext_quote.description }}</p>
-      </blockquote>
+        <a href="{{ int_quote.link }}">
+          <img class="grow" src="{{ int_quote.picture }}">
+        </a>
+
+        {% endif %}
+
+        <blockquote cite="{{ int_quote.link }}">
+          <h1><a href="{{ int_quote.link }}">{{ int_quote.title }}</a></h1>
+          <p class="desc">{{ int_quote.description }}</p>
+        </blockquote>
+
+      {% endif %} 
+      
+      {% if ext_quote %} 
+      
+        {% if ext_quote.picture %}
+
+          <a href="{{ ext_quote.link }}">
+            <img class="grow" src="{{ ext_quote.picture }}">
+          </a>
+
+        {% endif %}
+
+        <blockquote cite="{{ ext_quote.link }}">
+          <cite>{{ ext_quote.source }}</cite>
+          <h1><a href="{{ ext_quote.link }}">{{ ext_quote.title }}</a></h1>
+          <p class="desc">{{ ext_quote.description }}</p>
+        </blockquote>
 
       {% endif %}
 
