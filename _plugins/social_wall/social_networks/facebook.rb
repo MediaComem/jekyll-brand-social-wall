@@ -21,6 +21,7 @@ class FB
 
   def self.new_connection
     @graph = Koala::Facebook::API.new(ENV['FACEBOOK_ACCESS_TOKEN'])
+    Koala.config.api_version = "v2.9"
   end
 
   def self.get(meth, username, amount)
@@ -34,7 +35,7 @@ class FB
   end
 
   def self.connections(username, count)
-    @graph.get_connections(username,'posts',{limit: count})
+    @graph.get_connections(username,'posts',{limit: count, fields: ['object_id', 'message', 'message_tags', 'id','type', 'from', 'picture', 'link', 'created_time', 'status_type', 'caption', 'name', 'description']})
   end
 
   def self.get_object(object)
@@ -76,7 +77,7 @@ class FB
   end
 
   def photo
-    data = FB.get_object(@post['object_id'])
+    data = FB.get_object(@post['object_id'] +'?fields=width,height,source')
     src_full = FB.get_picture_data(@post['object_id'], 'normal')['data']['url'] if @post['type'] == 'photo'
     src_full = FB.get_object(@post['object_id'] +'?fields=cover')['cover']['source'] if @post['type'] == 'event'
 
@@ -104,7 +105,7 @@ class FB
     video['link'] = @post['link']
     video['id'] = /\/videos\/(?:t\.\d+\/)?(\d+)/i.match(@post['link'])[1]
 
-    picture_formats = FB.get_object(video['id'])['format']
+    picture_formats = FB.get_object(video['id'] +'?fields=format')['format']
     i_avg = (picture_formats.length.to_f/2).round # get the average quality
 
     video['picture'] = picture_formats[i_avg-1]['picture']
@@ -162,7 +163,7 @@ class FB
   def ext_quote
     quote = Hash.new
     quote['link'] = @post['link']
-    quote['picture'] = has_ext_quote_picture? ? ext_quote_picture : get_url_best_picture(quote['link'])
+    quote['picture'] = get_url_best_picture(quote['link'])
     quote['source'] = @post['caption']
     quote['title'] = @post['name']
     quote['description'] = @post['description']
@@ -170,11 +171,11 @@ class FB
     return quote
   end
 
-  # Message
-
   def has_message_tags?
     @post.has_key?('message_tags')
   end
+
+  # Message
 
   def has_message?
     @post.has_key?('message')
@@ -187,10 +188,8 @@ class FB
     text = text.gsub(/\#([a-z0-9âãäåæçèéêëìíîïðñòóôõøùúûüýþÿı_-]+)/i, '<a class="hashtag" href="https://www.facebook.com/hashtag/\1">#\1</a>')
     # Page, Group, user
     if has_message_tags?
-      @post['message_tags'].each do |k, v|
-        v.each do |h|
-          text = text.gsub(/\s(#{h["name"]})\s/, " <a class='mention' href='https://www.facebook.com/#{h["id"]}'>@#{h["name"]}</a> ")
-        end
+      @post['message_tags'].each do |tag|
+          text = text.gsub(/\s(#{tag["name"]})\s/, " <a class='mention' href='https://www.facebook.com/#{tag["id"]}'>@#{tag["name"]}</a> ")
       end
     end
 
@@ -200,7 +199,7 @@ class FB
   # Infos
 
   def user_info
-    username = FB.get_object(@post['from']['id'])['username']
+    username = FB.get_object(@post['from']['id'] +'?fields=username')['username']
     picture = FB.get_picture_data(@post['from']['id'], 'normal')
 
     user = Hash.new
